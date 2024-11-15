@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@userViewCSS.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.courseworkoop.UserViewController">
+   <children>
+      <Label layoutX="158.0" layoutY="24.0" styleClass="title-label" text="Hi! Let's start reading some articles" />
+      <Label layoutX="96.0" layoutY="58.0" styleClass="sub-title-label" text="Please select the article category that you want to read" />
+      <Button fx:id="technologyCategoryButton" layoutX="116.0" layoutY="108.0" mnemonicParsing="false" onAction="#onTechnologyButtonClick" text="Technology" />
+      <Button fx:id="healthCategoryButton" layoutX="239.0" layoutY="108.0" mnemonicParsing="false" onAction="#onCategoryButtonClick" text="Health" />
+      <Button fx:id="sportsCategoryButton" layoutX="421.0" layoutY="108.0" mnemonicParsing="false" onAction="#onSportsButtonClick" text="Sports" />
+      <Button fx:id="aiCategoryButton" layoutX="219.0" layoutY="163.0" mnemonicParsing="false" onAction="#onAIButtonClick" text="Artificial Intelligence" />
+      <Button fx:id="businessCategoryButton" layoutX="117.0" layoutY="163.0" mnemonicParsing="false" onAction="#onBusinessButtonClick" text="Business" />
+      <Button fx:id="scienceCategoryButton" layoutX="327.0" layoutY="108.0" mnemonicParsing="false" onAction="#onScienceButtonClick" text="Science" />
+      <Button fx:id="entertainmentCategoryButton" layoutX="381.0" layoutY="163.0" mnemonicParsing="false" onAction="#onEntertainmentButtonClick" text="Entertainment" />
+      <Button fx:id="educationCategoryButton" layoutX="327.0" layoutY="216.0" mnemonicParsing="false" onAction="#onEducationButtonClick" text="Education" />
+      <Button fx:id="environmentCategoryButton" layoutX="176.0" layoutY="216.0" mnemonicParsing="false" onAction="#onEnvironmentButtonClick" text="Environment" />
+      <Button fx:id="recommendArticlesButton" layoutX="232.0" layoutY="286.0" mnemonicParsing="false" onAction="#onRecommendArticleButtonClick" styleClass="recommend-button" text="Recommend Articles" />
+   </children>
+</AnchorPane>

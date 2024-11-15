@@ -1,0 +1,38 @@
+/*Style for title label*/
+.title-label {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2E86C1FF;
+}
+
+.sub-title-label {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2e61c1;
+}
+
+/* General button styles */
+.button {
+    -fx-background-color: #2e86c1;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-border-radius: 5px;
+    -fx-padding: 8px 16px;
+}
+
+.button:hover {
+    -fx-background-color: #21618c;
+}
+
+/* Specific style for Recommend Articles button */
+.recommend-button {
+    -fx-background-color: #28a745; /* Green */
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-border-radius: 5px;
+    -fx-padding: 8px 16px;
+}
+
+.recommend-button:hover {
+    -fx-background-color: #218838; /* Darker Green */
+}

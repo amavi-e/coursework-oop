@@ -26,7 +26,7 @@ public class SignInPageController {
     public Button forgotPasswordButton;
 
     // Inside SignInPageController.java
-    public void OnSignInButtonFinalClick(ActionEvent actionEvent) {
+    public void OnSignInButtonFinalClick(ActionEvent actionEvent) throws IOException {
         String username = usernameSignInPage.getText();
         String password = passwordSignInPage.getText();
 
@@ -41,7 +41,11 @@ public class SignInPageController {
         boolean validUser = dbManager.validateUser(username, password);
 
         if (validUser) {
-            showAlert("Success", "Login successful!");
+            Stage stage = (Stage) signInButtonFinal.getScene().getWindow();
+            Parent root = (Parent) FXMLLoader.load(this.getClass().getResource("user-view.fxml"));
+            stage.setScene(new Scene(root, 600, 400));
+            stage.show();
+
             // Proceed to the next scene or main application screen
         } else {
             showAlert("Error", "Invalid username or password.");
