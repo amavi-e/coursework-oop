@@ -25,7 +25,7 @@ public class SignUpPageController {
 
     private static final Pattern VALID_USERNAME_PATTERN = Pattern.compile("^[a-z0-9]+$");
 
-    public void onSignUpFinalButtonClick(ActionEvent actionEvent) {
+    public void onSignUpFinalButtonClick(ActionEvent actionEvent) throws IOException {
         String username = userNameFieldSignUp.getText();
         String password = passwordFieldSignUp.getText();
 
@@ -52,7 +52,17 @@ public class SignUpPageController {
         // Register the new user
         dbManager.registerUser(username, password);
 
-        showAlert("Success", "Account created successfully!");
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("user-view.fxml"));
+        Parent root = loader.load();
+
+        // Pass the username to UserViewController
+        UserViewController userController = loader.getController();
+        userController.setUsername(username);
+
+        Stage stage = (Stage) signUpFinalButton.getScene().getWindow();
+        stage.setScene(new Scene(root, 648, 356));
+        stage.show();
+
 
         // Clear fields after successful registration
         userNameFieldSignUp.clear();

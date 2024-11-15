@@ -3,6 +3,7 @@ package com.example.courseworkoop;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 
 public class UserViewController {
     @FXML
@@ -25,6 +26,17 @@ public class UserViewController {
     public Button environmentCategoryButton;
     @FXML
     public Button recommendArticlesButton;
+    @FXML
+    public Label usernameLabel; // Display username if needed
+
+    private String username;
+
+    public void setUsername(String username) {
+        this.username = username;
+        if (usernameLabel != null) {
+            usernameLabel.setText("Welcome, " + username + "!");
+        }
+    }
 
     public void onTechnologyButtonClick(ActionEvent actionEvent) {
     }

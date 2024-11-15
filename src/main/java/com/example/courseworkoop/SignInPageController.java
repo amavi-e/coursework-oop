@@ -41,13 +41,18 @@ public class SignInPageController {
         boolean validUser = dbManager.validateUser(username, password);
 
         if (validUser) {
-            Stage stage = (Stage) signInButtonFinal.getScene().getWindow();
-            Parent root = (Parent) FXMLLoader.load(this.getClass().getResource("user-view.fxml"));
-            stage.setScene(new Scene(root, 600, 400));
-            stage.show();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("user-view.fxml"));
+            Parent root = loader.load();
 
-            // Proceed to the next scene or main application screen
-        } else {
+            // Pass the username to UserViewController
+            UserViewController userController = loader.getController();
+            userController.setUsername(username);
+
+            Stage stage = (Stage) signInButtonFinal.getScene().getWindow();
+            stage.setScene(new Scene(root, 648, 356));
+            stage.show();
+        }
+        else {
             showAlert("Error", "Invalid username or password.");
         }
     }
