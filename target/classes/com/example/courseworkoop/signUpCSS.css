@@ -1,0 +1,60 @@
+/* General style for the AnchorPane background */
+.anchor-pane {
+    -fx-background-color: #f7f9fc;
+}
+
+/* Styling for all labels */
+.label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #4a4a4a;
+    -fx-font-family: Arial, sans-serif;
+}
+
+/* Specific style for the title label */
+.title-label {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2e86c1;
+    -fx-alignment: center;
+}
+
+/* Style for TextFields */
+.text-field {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dcdcdc;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px;
+    -fx-prompt-text-fill: #aaaaaa;
+}
+
+/* Styles for buttons */
+.button {
+    -fx-background-color: #2e86c1;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 5px;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #1a5276;
+}
+
+/* Style for Sign-Up Button */
+#signUpFinalButton {
+    -fx-background-color: #3498db;
+}
+
+#signUpFinalButton:hover {
+    -fx-background-color: #2874a6;
+}
+
+/* Style for Sign-In Button */
+#signInCreateAccountButton {
+    -fx-background-color: transparent;
+    -fx-text-fill: #3498db;
+    -fx-underline: true;
+    -fx-cursor: hand;
+}

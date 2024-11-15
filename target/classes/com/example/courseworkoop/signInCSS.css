@@ -1,0 +1,58 @@
+.anchor-pane {
+    -fx-background-color: #f0f0f0;
+}
+
+/*Label styles*/
+.label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+    -fx-font-family: Arial, sans-serif;
+}
+
+/*Style for title label*/
+.title-label {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2e86c1;
+}
+
+/* Styles for TextFields */
+.text-field {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px;
+}
+
+/* Lighter style for prompt text */
+.text-field:focused .text-field {
+    -fx-prompt-text-fill: #cccccc;
+}
+
+/* Make prompt text even lighter when not focused */
+.text-field .text-field {
+    -fx-prompt-text-fill: #aaaaaa;
+}
+
+/* button styles */
+.button {
+    -fx-background-color: #2e86c1;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-border-radius: 5px;
+    -fx-padding: 8px 16px;
+}
+
+.button:hover {
+    -fx-background-color: #21618c;
+}
+
+/* sign up style for link */
+#signUpLoginPageButton, #forgotPasswordButton {
+    -fx-background-color: transparent;
+    -fx-text-fill: #3498db;
+    -fx-underline: true;
+    -fx-cursor: hand;
+}
+
+

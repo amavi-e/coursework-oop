@@ -1,0 +1,60 @@
+/* General styles for AnchorPane */
+.anchor-pane {
+    -fx-background-color: #f9f9f9;
+}
+
+/* Styles for Labels */
+.label {
+    -fx-font-size: 16px;
+    -fx-text-fill: #333333;
+    -fx-font-family: Arial, sans-serif;
+}
+
+/* Specific style for the main title */
+.title-label {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2e86c1;
+    -fx-alignment: center;
+}
+
+/* Styles for Button */
+.button {
+    -fx-background-color: #2e86c1;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 5px;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #21618c;
+}
+
+/* Style for Sign-In Button */
+#signINButton {
+    -fx-background-color: #3498db;
+    -fx-font-size: 14px;
+}
+
+#signINButton:hover {
+    -fx-background-color: #2874a6;
+}
+
+/* Style for Sign-Up Button */
+#signUPbutton {
+    -fx-background-color: #3498db;
+    -fx-font-size: 14px;
+}
+
+#signUPbutton:hover {
+    -fx-background-color: #2874a6;
+}
+
+/* Style for "Create an account" and "Already has an account" labels */
+.create-account-label, .existing-account-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #7d7d7d;
+}
