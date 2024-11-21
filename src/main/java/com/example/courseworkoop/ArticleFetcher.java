@@ -22,7 +22,7 @@ public class ArticleFetcher {
 
     public void fetchAndStoreArticles() {
         try {
-            //Step 1: Fetch articles from API
+            // Step 1: Fetch articles from API
             URL url = new URL(API_URL);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
@@ -38,6 +38,11 @@ public class ArticleFetcher {
 
             // Parse JSON response
             JSONObject jsonResponse = new JSONObject(content.toString());
+
+            // Extract total number of articles
+            int totalArticles = jsonResponse.getInt("totalResults");
+            System.out.println("Total number of articles available: " + totalArticles);
+
             JSONArray articles = jsonResponse.getJSONArray("articles");
 
             // Step 2: Categorize and store articles
@@ -47,8 +52,19 @@ public class ArticleFetcher {
                 String description = article.optString("description", "No Description");
                 String contentText = article.optString("content", "No Content");
 
+                // Skip articles with "[removed]" in title, description, or content
+                if (title.equals("[Removed]") || description.equals("[Removed]") || contentText.equals("[Removed]")) {
+                    System.out.println("Skipping article with removed content.");
+                    continue;
+                }
+
                 // Categorize the article
                 String category = categorizeArticle(title + " " + description + " " + contentText);
+
+                // If uncategorized, mark as "General"
+                if (category.equals("Uncategorized")) {
+                    category = "General";
+                }
 
                 // Store the article in the database
                 storeArticleInDatabase(title, description, contentText, category);
@@ -58,6 +74,7 @@ public class ArticleFetcher {
             e.printStackTrace();
         }
     }
+
 
     // Categorize an article based on simple keyword matching
     private String categorizeArticle(String text) {
@@ -155,7 +172,6 @@ public class ArticleFetcher {
         }
         return category;
     }
-
 
     // Store the article in the database
     private void storeArticleInDatabase(String title, String description, String content, String category) {

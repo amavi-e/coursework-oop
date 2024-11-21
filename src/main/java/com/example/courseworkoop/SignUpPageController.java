@@ -60,7 +60,7 @@ public class SignUpPageController {
         userController.setUsername(username);
 
         Stage stage = (Stage) signUpFinalButton.getScene().getWindow();
-        stage.setScene(new Scene(root, 648, 356));
+        stage.setScene(new Scene(root, 743, 495));
         stage.show();
 
 
