@@ -20,6 +20,44 @@ public class ArticleFetcher {
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "";
 
+    private static final Map<String, String> CATEGORY_KEYWORDS = new HashMap<>();
+
+    static {
+        CATEGORY_KEYWORDS.put("AI & Machine Learning", "artificial intelligence AI machine learning neural networks deep learning automation robotics algorithms");
+        CATEGORY_KEYWORDS.put("Social Media", "social media Facebook Instagram Twitter TikTok influencers content viral posts trends engagement hashtags");
+        CATEGORY_KEYWORDS.put("Crime", "crime police investigation murder theft robbery fraud hacking cybercrime illegal activities");
+        CATEGORY_KEYWORDS.put("Sales", "sales discounts promotions deals ecommerce marketing strategy revenue profits");
+        CATEGORY_KEYWORDS.put("Shopping", "shopping retail ecommerce online store marketplace customers brands");
+        CATEGORY_KEYWORDS.put("Healthcare", "healthcare hospitals clinics medical treatment patients insurance health management doctors nurses");
+        CATEGORY_KEYWORDS.put("Hospital", "hospital emergency surgery ICU healthcare facility treatment doctors nurses");
+        CATEGORY_KEYWORDS.put("Agriculture", "agriculture farming crops livestock soil irrigation sustainable farming pesticides fertilizers");
+        CATEGORY_KEYWORDS.put("Geological Research", "geology earth research tectonics seismology minerals rocks natural disasters volcanoes earthquakes");
+        CATEGORY_KEYWORDS.put("Entertainment", "movies music celebrities Hollywood Bollywood TV shows streaming platforms comics theater");
+        CATEGORY_KEYWORDS.put("Education", "education learning school university online courses training knowledge exams skills");
+        CATEGORY_KEYWORDS.put("Business & Finance", "business finance economy stocks investing startup entrepreneur market banking trading cryptocurrency");
+        CATEGORY_KEYWORDS.put("Technology & Gadgets", "technology gadgets software hardware cloud computing cybersecurity smartphones apps");
+        CATEGORY_KEYWORDS.put("Science & Research", "science space research biology physics chemistry genetics exploration innovation experiments NASA");
+        CATEGORY_KEYWORDS.put("Health & Wellness", "health medicine fitness nutrition mental health wellness pandemic COVID vaccine disease hospital");
+        CATEGORY_KEYWORDS.put("Sports", "sports football basketball cricket tennis Olympics athletics soccer baseball hockey");
+        CATEGORY_KEYWORDS.put("Politics", "politics elections government policies democracy parliament congress laws leaders diplomacy");
+        CATEGORY_KEYWORDS.put("Environment & Sustainability", "environment climate pollution recycling sustainability global warming wildlife conservation energy");
+        CATEGORY_KEYWORDS.put("Travel & Tourism", "travel tourism destinations hotels flights sightseeing adventure backpacking itineraries vacations trips");
+        CATEGORY_KEYWORDS.put("Food & Cooking", "food cooking recipes cuisine dining restaurants kitchen culinary baking chefs meals");
+        CATEGORY_KEYWORDS.put("Lifestyle", "lifestyle habits wellness mindfulness personal development happiness trends routines");
+        CATEGORY_KEYWORDS.put("Fashion & Beauty", "fashion beauty skincare makeup trends style clothing accessories runway grooming");
+        CATEGORY_KEYWORDS.put("Automotive", "automotive cars vehicles electric vehicles engines road trips mechanics driving car reviews");
+        CATEGORY_KEYWORDS.put("Real Estate", "real estate property housing market apartments homes land development mortgages construction");
+        CATEGORY_KEYWORDS.put("Gaming", "gaming video games esports consoles PC gaming mobile gaming virtual reality online games");
+        CATEGORY_KEYWORDS.put("History", "history ancient modern events wars civilizations archaeology historical leaders discoveries");
+        CATEGORY_KEYWORDS.put("World News", "world news international events diplomacy global conflicts economy trade culture current events");
+        CATEGORY_KEYWORDS.put("Arts & Culture", "arts culture painting sculpture museums galleries photography heritage creativity exhibits festivals");
+        CATEGORY_KEYWORDS.put("Startups & Entrepreneurship", "startups entrepreneurship innovation business growth funding investors ventures bootstrapping");
+        CATEGORY_KEYWORDS.put("Books & Literature", "books literature novels poetry authors writing publishing reading libraries reviews");
+        CATEGORY_KEYWORDS.put("Religion & Spirituality", "religion spirituality beliefs practices faith meditation rituals culture philosophy theology");
+        CATEGORY_KEYWORDS.put("Parenting & Family", "parenting family children education motherhood fatherhood relationships parenting tips childhood development");
+        CATEGORY_KEYWORDS.put("DIY & Home Improvement", "DIY home improvement repairs renovation furniture decoration tools projects gardening household");
+    }
+
     public void fetchAndStoreArticles() {
         try {
             // Step 1: Fetch articles from API
@@ -58,12 +96,13 @@ public class ArticleFetcher {
                     continue;
                 }
 
-                // Categorize the article
-                String category = categorizeArticle(title + " " + description + " " + contentText);
+                // Categorize the article using NLP
+                String category = categorizeArticleUsingNLP(title + " " + description + " " + contentText);
 
-                // If uncategorized, mark as "General"
-                if (category.equals("Uncategorized")) {
-                    category = "General";
+                // Retry categorization if the category is "General"
+                if (category.equals("General")) {
+                    System.out.println("Retrying categorization for article: " + title);
+                    category = retryCategorization(title + " " + description + " " + contentText);
                 }
 
                 // Store the article in the database
@@ -75,102 +114,75 @@ public class ArticleFetcher {
         }
     }
 
+    // Categorize an article using NLP with TF-IDF similarity
+    private String categorizeArticleUsingNLP(String text) {
+        Map<String, Double> similarityScores = new HashMap<>();
+        String cleanedText = text.toLowerCase().replaceAll("[^a-z0-9\\s]", " ");
 
-    // Categorize an article based on simple keyword matching
-    private String categorizeArticle(String text) {
-        Map<String, String> keywordToCategory = new HashMap<>();
+        // Create TF-IDF for article text
+        Map<String, Integer> articleWordCount = calculateWordFrequency(cleanedText);
 
-        // Technology-related keywords
-        keywordToCategory.put("technology", "Technology");
-        keywordToCategory.put("programming", "Technology");
-        keywordToCategory.put("software", "Technology");
-        keywordToCategory.put("hardware", "Technology");
-        keywordToCategory.put("gadgets", "Technology");
-        keywordToCategory.put("AI", "Artificial Intelligence");
-        keywordToCategory.put("artificial intelligence", "Artificial Intelligence");
-        keywordToCategory.put("machine learning", "Artificial Intelligence");
-        keywordToCategory.put("cloud computing", "Technology");
-        keywordToCategory.put("cybersecurity", "Technology");
+        for (Map.Entry<String, String> categoryEntry : CATEGORY_KEYWORDS.entrySet()) {
+            String category = categoryEntry.getKey();
+            String keywords = categoryEntry.getValue();
 
-        // Health-related keywords
-        keywordToCategory.put("health", "Health");
-        keywordToCategory.put("medicine", "Health");
-        keywordToCategory.put("fitness", "Health");
-        keywordToCategory.put("nutrition", "Health");
-        keywordToCategory.put("mental health", "Health");
-        keywordToCategory.put("wellness", "Health");
-        keywordToCategory.put("pandemic", "Health");
-        keywordToCategory.put("COVID", "Health");
-        keywordToCategory.put("vaccine", "Health");
+            // Create TF-IDF for category keywords
+            Map<String, Integer> categoryWordCount = calculateWordFrequency(keywords);
 
-        // Sports-related keywords
-        keywordToCategory.put("sports", "Sports");
-        keywordToCategory.put("football", "Sports");
-        keywordToCategory.put("basketball", "Sports");
-        keywordToCategory.put("cricket", "Sports");
-        keywordToCategory.put("tennis", "Sports");
-        keywordToCategory.put("Olympics", "Sports");
-        keywordToCategory.put("athletics", "Sports");
-        keywordToCategory.put("soccer", "Sports");
-
-        // Business-related keywords
-        keywordToCategory.put("business", "Business");
-        keywordToCategory.put("finance", "Business");
-        keywordToCategory.put("economy", "Business");
-        keywordToCategory.put("stocks", "Business");
-        keywordToCategory.put("investing", "Business");
-        keywordToCategory.put("startup", "Business");
-        keywordToCategory.put("entrepreneur", "Business");
-
-        // Science-related keywords
-        keywordToCategory.put("science", "Science");
-        keywordToCategory.put("space", "Science");
-        keywordToCategory.put("NASA", "Science");
-        keywordToCategory.put("research", "Science");
-        keywordToCategory.put("biology", "Science");
-        keywordToCategory.put("physics", "Science");
-        keywordToCategory.put("chemistry", "Science");
-        keywordToCategory.put("genetics", "Science");
-
-        // Entertainment-related keywords
-        keywordToCategory.put("entertainment", "Entertainment");
-        keywordToCategory.put("movies", "Entertainment");
-        keywordToCategory.put("music", "Entertainment");
-        keywordToCategory.put("celebrities", "Entertainment");
-        keywordToCategory.put("Hollywood", "Entertainment");
-        keywordToCategory.put("Bollywood", "Entertainment");
-        keywordToCategory.put("TV shows", "Entertainment");
-        keywordToCategory.put("games", "Entertainment");
-        keywordToCategory.put("comics", "Entertainment");
-
-        // Education-related keywords
-        keywordToCategory.put("education", "Education");
-        keywordToCategory.put("learning", "Education");
-        keywordToCategory.put("school", "Education");
-        keywordToCategory.put("university", "Education");
-        keywordToCategory.put("online courses", "Education");
-        keywordToCategory.put("training", "Education");
-
-        // Environment-related keywords
-        keywordToCategory.put("environment", "Environment");
-        keywordToCategory.put("climate", "Environment");
-        keywordToCategory.put("pollution", "Environment");
-        keywordToCategory.put("recycling", "Environment");
-        keywordToCategory.put("sustainability", "Environment");
-        keywordToCategory.put("global warming", "Environment");
-        keywordToCategory.put("wildlife", "Environment");
-
-        // Default category
-        String category = "Uncategorized";
-
-        // Simple keyword matching
-        for (Map.Entry<String, String> entry : keywordToCategory.entrySet()) {
-            if (text.toLowerCase().contains(entry.getKey().toLowerCase())) {
-                category = entry.getValue();
-                break;
-            }
+            // Calculate cosine similarity
+            double similarity = calculateCosineSimilarity(articleWordCount, categoryWordCount);
+            similarityScores.put(category, similarity);
         }
-        return category;
+
+        // Find the category with the highest similarity score
+        return similarityScores.entrySet()
+                .stream()
+                .max(Map.Entry.comparingByValue())
+                .filter(entry -> entry.getValue() > 0.05) // Threshold for meaningful similarity
+                .map(Map.Entry::getKey)
+                .orElse("General");
+    }
+
+    // Retry categorization with slightly adjusted thresholds or additional processing
+    private String retryCategorization(String text) {
+        System.out.println("Retrying categorization with adjusted thresholds...");
+        return categorizeArticleUsingNLP(text);
+    }
+
+    // Calculate word frequency
+    private Map<String, Integer> calculateWordFrequency(String text) {
+        Map<String, Integer> wordCount = new HashMap<>();
+        String[] words = text.split("\\W+");
+        for (String word : words) {
+            word = word.toLowerCase();
+            wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
+        }
+        return wordCount;
+    }
+
+    // Calculate cosine similarity between two word frequency vectors
+    private double calculateCosineSimilarity(Map<String, Integer> vectorA, Map<String, Integer> vectorB) {
+        double dotProduct = 0.0;
+        double magnitudeA = 0.0;
+        double magnitudeB = 0.0;
+
+        for (String key : vectorA.keySet()) {
+            int valueA = vectorA.get(key);
+            int valueB = vectorB.getOrDefault(key, 0);
+
+            dotProduct += valueA * valueB;
+            magnitudeA += valueA * valueA;
+        }
+
+        for (int valueB : vectorB.values()) {
+            magnitudeB += valueB * valueB;
+        }
+
+        if (magnitudeA == 0 || magnitudeB == 0) {
+            return 0.0;
+        }
+
+        return dotProduct / (Math.sqrt(magnitudeA) * Math.sqrt(magnitudeB));
     }
 
     // Store the article in the database
@@ -191,6 +203,7 @@ public class ArticleFetcher {
         }
     }
 
+    // Main method to execute the application
     public static void main(String[] args) {
         ArticleFetcher fetcher = new ArticleFetcher();
         fetcher.fetchAndStoreArticles();
