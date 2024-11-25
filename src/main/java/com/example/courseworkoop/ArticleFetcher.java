@@ -10,6 +10,7 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -114,17 +115,16 @@ public class ArticleFetcher {
         }
     }
 
-    // Categorize an article using NLP with TF-IDF similarity
     private String categorizeArticleUsingNLP(String text) {
         Map<String, Double> similarityScores = new HashMap<>();
-        String cleanedText = text.toLowerCase().replaceAll("[^a-z0-9\\s]", " ");
+        String cleanedText = preprocessText(text);
 
         // Create TF-IDF for article text
         Map<String, Integer> articleWordCount = calculateWordFrequency(cleanedText);
 
         for (Map.Entry<String, String> categoryEntry : CATEGORY_KEYWORDS.entrySet()) {
             String category = categoryEntry.getKey();
-            String keywords = categoryEntry.getValue();
+            String keywords = preprocessText(categoryEntry.getValue());
 
             // Create TF-IDF for category keywords
             Map<String, Integer> categoryWordCount = calculateWordFrequency(keywords);
@@ -138,18 +138,39 @@ public class ArticleFetcher {
         return similarityScores.entrySet()
                 .stream()
                 .max(Map.Entry.comparingByValue())
-                .filter(entry -> entry.getValue() > 0.05) // Threshold for meaningful similarity
+                .filter(entry -> entry.getValue() > 0.02)
                 .map(Map.Entry::getKey)
                 .orElse("General");
     }
 
-    // Retry categorization with slightly adjusted thresholds or additional processing
+    private String preprocessText(String text) {
+        text = text.toLowerCase().replaceAll("[^a-z0-9\\s]", " ");
+        String[] words = text.split("\\s+");
+        StringBuilder processedText = new StringBuilder();
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                processedText.append(stem(word)).append(" ");
+            }
+        }
+        return processedText.toString().trim();
+    }
+
+    private String stem(String word) {
+        if (word.length() > 3) {
+            if (word.endsWith("ing") || word.endsWith("ed")) {
+                word = word.substring(0, word.length() - 3);
+            } else if (word.endsWith("ly") || word.endsWith("es") || word.endsWith("s")) {
+                word = word.substring(0, word.length() - 2);
+            }
+        }
+        return word;
+    }
+
     private String retryCategorization(String text) {
         System.out.println("Retrying categorization with adjusted thresholds...");
         return categorizeArticleUsingNLP(text);
     }
 
-    // Calculate word frequency
     private Map<String, Integer> calculateWordFrequency(String text) {
         Map<String, Integer> wordCount = new HashMap<>();
         String[] words = text.split("\\W+");
@@ -160,52 +181,65 @@ public class ArticleFetcher {
         return wordCount;
     }
 
-    // Calculate cosine similarity between two word frequency vectors
-    private double calculateCosineSimilarity(Map<String, Integer> vectorA, Map<String, Integer> vectorB) {
+    private double calculateCosineSimilarity(Map<String, Integer> vec1, Map<String, Integer> vec2) {
         double dotProduct = 0.0;
-        double magnitudeA = 0.0;
-        double magnitudeB = 0.0;
+        double normA = 0.0;
+        double normB = 0.0;
 
-        for (String key : vectorA.keySet()) {
-            int valueA = vectorA.get(key);
-            int valueB = vectorB.getOrDefault(key, 0);
-
-            dotProduct += valueA * valueB;
-            magnitudeA += valueA * valueA;
+        for (String key : vec1.keySet()) {
+            dotProduct += vec1.get(key) * vec2.getOrDefault(key, 0);
+            normA += Math.pow(vec1.get(key), 2);
         }
 
-        for (int valueB : vectorB.values()) {
-            magnitudeB += valueB * valueB;
+        for (int value : vec2.values()) {
+            normB += Math.pow(value, 2);
         }
 
-        if (magnitudeA == 0 || magnitudeB == 0) {
+        if (normA == 0 || normB == 0) {
             return 0.0;
         }
 
-        return dotProduct / (Math.sqrt(magnitudeA) * Math.sqrt(magnitudeB));
+        return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
     }
 
-    // Store the article in the database
     private void storeArticleInDatabase(String title, String description, String content, String category) {
-        String insertQuery = "INSERT INTO Articles (title, description, content, category) VALUES (?, ?, ?, ?)";
+        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+            // Check if the article already exists in the database based on the title
+            String checkQuery = "SELECT COUNT(*) FROM Articles WHERE title = ?";
+            PreparedStatement checkStatement = connection.prepareStatement(checkQuery);
+            checkStatement.setString(1, title);
+            ResultSet resultSet = checkStatement.executeQuery();
 
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-             PreparedStatement stmt = conn.prepareStatement(insertQuery)) {
+            resultSet.next();
+            int count = resultSet.getInt(1);
 
-            stmt.setString(1, title);
-            stmt.setString(2, description);
-            stmt.setString(3, content);
-            stmt.setString(4, category);
-            stmt.executeUpdate();
+            if (count > 0) {
+                System.out.println("Article already exists in database: " + title);
+            } else {
+                // Insert the article if it does not exist
+                String insertQuery = "INSERT INTO Articles (title, description, content, category) VALUES (?, ?, ?, ?)";
+                PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
+                insertStatement.setString(1, title);
+                insertStatement.setString(2, description);
+                insertStatement.setString(3, content);
+                insertStatement.setString(4, category);
+                insertStatement.executeUpdate();
 
+                System.out.println("Stored article in database: " + title + " (" + category + ")");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // Main method to execute the application
     public static void main(String[] args) {
         ArticleFetcher fetcher = new ArticleFetcher();
         fetcher.fetchAndStoreArticles();
     }
+
 }
+
+
+
+
+
