@@ -13,5 +13,8 @@
         <Label fx:id="contentLabel" layoutX="28.0" layoutY="264.0" maxWidth="550.0" prefWidth="560.0" styleClass="article-content-label" text="Content" wrapText="true" />
         <Button fx:id="backButton" layoutX="24.0" layoutY="21.0" mnemonicParsing="false" onAction="#onBackButtonClick" text="Back" />
         <Label fx:id="usernameLabel" layoutX="500.0" layoutY="26.0" styleClass="welcome-name-label" text="" />
+        <Button fx:id="likeButton" layoutX="201.0" layoutY="23.0" mnemonicParsing="false" onAction="#onLikeButtonClick" text="Like article" />
+        <Button fx:id="dislikeButton" layoutX="297.0" layoutY="23.0" mnemonicParsing="false" onAction="#onDislikeButtonClick" text="Dislike article" />
+
     </children>
 </AnchorPane>

@@ -122,28 +122,49 @@ public class UserViewController{
     }
 
 
-
     private void logUserHistory(Article article) {
         String url = "jdbc:mysql://localhost:3306/personalizedArticles";
         String user = "root";
         String password = "";
 
-        String query = "INSERT INTO UserArticleHistory (username, articleTitle, articleCategory) VALUES (?, ?, ?)";
+        // First, check if the user has already viewed the article
+        String checkQuery = "SELECT viewCount FROM UserArticleHistory WHERE username = ? AND articleTitle = ?";
+
+        String insertQuery = "INSERT INTO UserArticleHistory (username, articleTitle, articleCategory, viewCount) VALUES (?, ?, ?, ?)";
+        String updateQuery = "UPDATE UserArticleHistory SET viewCount = viewCount + 1 WHERE username = ? AND articleTitle = ?";
 
         try (Connection connection = DriverManager.getConnection(url, user, password);
-             PreparedStatement statement = connection.prepareStatement(query)) {
+             PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
 
-            statement.setString(1, username);
-            statement.setString(2, article.getTitle());
-            statement.setString(3, article.getCategory());
+            checkStatement.setString(1, username);
+            checkStatement.setString(2, article.getTitle());
 
-            int rowsInserted = statement.executeUpdate();
-            if (rowsInserted > 0) {
-                System.out.println("User history logged successfully!");
+            try (ResultSet resultSet = checkStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    // If the article is already in the history, update the viewCount
+                    int currentViewCount = resultSet.getInt("viewCount");
+                    try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
+                        updateStatement.setString(1, username);
+                        updateStatement.setString(2, article.getTitle());
+                        updateStatement.executeUpdate();
+                        System.out.println("User history updated successfully. View count: " + (currentViewCount + 1));
+                    }
+                } else {
+                    // If the article is not in the history, insert a new record
+                    try (PreparedStatement insertStatement = connection.prepareStatement(insertQuery)) {
+                        insertStatement.setString(1, username);
+                        insertStatement.setString(2, article.getTitle());
+                        insertStatement.setString(3, article.getCategory());
+                        insertStatement.setInt(4, 1); // Start viewCount from 1
+                        insertStatement.executeUpdate();
+                        System.out.println("User history logged successfully. View count: 1");
+                    }
+                }
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 }

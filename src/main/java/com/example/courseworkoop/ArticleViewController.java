@@ -10,29 +10,86 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
-public class ArticleViewController extends BaseViewController {
+public class ArticleViewController{
     @FXML
     public Button backButton;
-
+    @FXML
+    public Button likeButton;
+    @FXML
+    public Button dislikeButton;
     @FXML
     private Label titleLabel;
-
     @FXML
     private Label descriptionLabel;
-
     @FXML
     private Label contentLabel;
+    @FXML
+    protected Label usernameLabel;
 
     private String username; // Store username
+    private String articleTitle; // Store article title
+    private String currentLikeDislikeStatus = "none"; // To track like/dislike status
 
     // Method to set article details along with username
     public void setArticleDetails(String title, String description, String content, String username) {
-        super.setUsername(username); // Set username using the inherited method
         titleLabel.setText(title);
         descriptionLabel.setText("Description: " + description);
         contentLabel.setText(content);
         this.username = username; // Store the username
+        this.articleTitle = title;
+        setUsername(username);// Store article title
+
+        // Retrieve the current like/dislike status from the database
+        retrieveLikeDislikeStatus();
+    }
+
+    public void setUsername(String username) {
+        if (usernameLabel != null) {
+            usernameLabel.setText("Welcome, " + username + "!");
+        }
+    }
+
+    // Method to retrieve the current like/dislike status from the database
+    private void retrieveLikeDislikeStatus() {
+        String url = "jdbc:mysql://localhost:3306/personalizedArticles";
+        String user = "root";
+        String password = "";
+        String query = "SELECT likeDislikeStatus FROM UserArticleHistory WHERE username = ? AND articleTitle = ?";
+
+        try (Connection connection = DriverManager.getConnection(url, user, password);
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, username);
+            statement.setString(2, articleTitle);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    currentLikeDislikeStatus = resultSet.getString("likeDislikeStatus");
+                    updateButtonStates();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Method to update the button states based on the current status
+    private void updateButtonStates() {
+        if ("liked".equals(currentLikeDislikeStatus)) {
+            likeButton.setStyle("-fx-background-color: #388E3C;"); // Highlight like button
+            dislikeButton.setStyle(""); // Reset dislike button
+        } else if ("disliked".equals(currentLikeDislikeStatus)) {
+            likeButton.setStyle(""); // Reset like button
+            dislikeButton.setStyle("-fx-background-color: #D32F2F;"); // Highlight dislike button
+        } else {
+            likeButton.setStyle("");  // Reset like button
+            dislikeButton.setStyle("");  // Reset dislike button
+        }
     }
 
     // Action when back button is clicked
@@ -52,4 +109,78 @@ public class ArticleViewController extends BaseViewController {
         previousStage.show();
     }
 
+    // Handle Like button click
+    public void onLikeButtonClick(ActionEvent actionEvent) {
+        if ("liked".equals(currentLikeDislikeStatus)) {
+            currentLikeDislikeStatus = "none"; // Un-like the article
+        } else {
+            currentLikeDislikeStatus = "liked"; // Like the article
+        }
+
+        // Update the database with the new status
+        logUserHistory(username, articleTitle, currentLikeDislikeStatus);
+
+        // Update the button states
+        updateButtonStates();
+    }
+
+    // Handle Dislike button click
+    public void onDislikeButtonClick(ActionEvent actionEvent) {
+        if ("disliked".equals(currentLikeDislikeStatus)) {
+            currentLikeDislikeStatus = "none"; // Un-dislike the article
+        } else {
+            currentLikeDislikeStatus = "disliked"; // Dislike the article
+        }
+
+        // Update the database with the new status
+        logUserHistory(username, articleTitle, currentLikeDislikeStatus);
+
+        // Update the button states
+        updateButtonStates();
+    }
+
+    public void logUserHistory(String username, String articleTitle, String likeDislikeStatus) {
+        String url = "jdbc:mysql://localhost:3306/personalizedArticles";
+        String user = "root";
+        String password = "";
+        String query;
+
+        // Check if the user already has a history record for this article
+        String checkQuery = "SELECT * FROM UserArticleHistory WHERE username = ? AND articleTitle = ?";
+
+        try (Connection connection = DriverManager.getConnection(url, user, password);
+             PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
+
+            checkStatement.setString(1, username);
+            checkStatement.setString(2, articleTitle);
+
+            try (ResultSet resultSet = checkStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    // If a record exists, update the existing record
+                    query = "UPDATE UserArticleHistory SET likeDislikeStatus = ? WHERE username = ? AND articleTitle = ?";
+                    try (PreparedStatement updateStatement = connection.prepareStatement(query)) {
+                        updateStatement.setString(1, likeDislikeStatus);
+                        updateStatement.setString(2, username);
+                        updateStatement.setString(3, articleTitle);
+                        updateStatement.executeUpdate();
+                        System.out.println("User history updated successfully!");
+                    }
+                } else {
+                    // If no record exists, insert a new record
+                    query = "INSERT INTO UserArticleHistory (username, articleTitle, articleCategory, likeDislikeStatus) VALUES (?, ?, ?, ?)";
+                    try (PreparedStatement insertStatement = connection.prepareStatement(query)) {
+                        insertStatement.setString(1, username);
+                        insertStatement.setString(2, articleTitle);
+                        insertStatement.setString(3, "Category"); // Replace with actual article category
+                        insertStatement.setString(4, likeDislikeStatus);
+                        insertStatement.executeUpdate();
+                        System.out.println("User history logged successfully!");
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
