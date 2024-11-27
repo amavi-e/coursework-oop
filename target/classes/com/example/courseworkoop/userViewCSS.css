@@ -72,3 +72,12 @@
     -fx-text-fill: #555555;
     -fx-wrap-text: true; /* Enable text wrapping if needed */
 }
+
+/* Hover effect for ListCell */
+.article-list-view .list-cell:hover {
+    -fx-background-color: #e8f4fc; /* Light blue */
+    -fx-cursor: hand; /* Pointer cursor */
+}
+
+
+

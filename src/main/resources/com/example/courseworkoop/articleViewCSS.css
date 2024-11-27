@@ -1,0 +1,61 @@
+/* Style for the article title */
+.article-title-label {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 10px 0 5px 0;
+}
+
+/* Style for the article description */
+.article-description-label {
+    -fx-font-size: 18px;
+    -fx-font-weight: normal;
+    -fx-text-fill: #7f8c8d;
+    -fx-padding: 5px 0;
+}
+
+/* Style for the article content */
+.article-content-label {
+    -fx-font-size: 16px;
+    -fx-text-fill: #34495e;
+    -fx-padding: 10px 0;
+    -fx-wrap-text: true;
+    -fx-pref-width: 560px;
+    -fx-line-spacing: 1.5;
+}
+
+/* Container to make sure the content is well spaced */
+.AnchorPane {
+    -fx-background-color: #ecf0f1;
+    -fx-padding: 20px;
+}
+
+/* Label for the description */
+.Label {
+    -fx-background-color: transparent;
+}
+
+/* Add some margin for the whole window */
+.root {
+    -fx-padding: 15px;
+}
+
+/* Add some spacing between the components */
+.article-title-label,
+.article-description-label,
+.article-content-label {
+    -fx-margin-bottom: 15px;
+}
+
+.welcome-name-label{
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2e61c1;
+}
+
+#backButton {
+    -fx-background-color: transparent;
+    -fx-text-fill: #3498db;
+    -fx-underline: true;
+    -fx-cursor: hand;
+}

@@ -4,6 +4,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -12,6 +14,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -19,7 +22,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserViewController {
+public class UserViewController{
     @FXML
     public Button recommendArticlesButton;
     @FXML
@@ -29,6 +32,7 @@ public class UserViewController {
 
     private String username;
 
+    // Set username and populate articles when set
     public void setUsername(String username) {
         this.username = username;
         if (usernameLabel != null) {
@@ -37,6 +41,7 @@ public class UserViewController {
         // Populate articles when the username is set
         populateArticles();
     }
+
 
     private void populateArticles() {
         List<Article> articles = fetchArticles();
@@ -50,16 +55,6 @@ public class UserViewController {
     @FXML
     public void onRecommendArticleButtonClick(ActionEvent actionEvent) {
         System.out.println("Recommend Articles button clicked!");
-    }
-
-    @FXML
-    public void onArticleClicked(MouseEvent mouseEvent) {
-        if (mouseEvent.getClickCount() == 2) { // Double-click to view article content
-            Article selectedArticle = articlesListView.getSelectionModel().getSelectedItem();
-            if (selectedArticle != null) {
-                showArticleContent(selectedArticle);
-            }
-        }
     }
 
     private List<Article> fetchArticles() {
@@ -89,30 +84,44 @@ public class UserViewController {
         return articles;
     }
 
-    private void showArticleContent(Article article) {
-        Stage stage = new Stage();
-        AnchorPane pane = new AnchorPane();
-
-        Label titleLabel = new Label(article.getTitle());
-        titleLabel.setLayoutX(20);
-        titleLabel.setLayoutY(20);
-
-        Label contentLabel = new Label(article.getContent());
-        contentLabel.setLayoutX(20);
-        contentLabel.setLayoutY(60);
-        contentLabel.setWrapText(true);
-        contentLabel.setPrefWidth(400);
-
-        pane.getChildren().addAll(titleLabel, contentLabel);
-
-        Scene scene = new Scene(pane, 500, 300);
-        stage.setScene(scene);
-        stage.setTitle("Article Content");
-        stage.show();
-
-        // Log the user's selected article to the database
-        logUserHistory(article);
+    @FXML
+    public void onArticleClicked(MouseEvent mouseEvent) {
+        if (mouseEvent.getClickCount() == 2) { // Double-click to view article content
+            Article selectedArticle = articlesListView.getSelectionModel().getSelectedItem();
+            if (selectedArticle != null) {
+                showArticleContent(selectedArticle);
+            }
+        }
     }
+
+    private void showArticleContent(Article article) {
+        try {
+            // Load the FXML file for the article view
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("article-view.fxml"));
+            Parent root = loader.load();
+
+            // Get the controller for the article view
+            ArticleViewController articleViewController = loader.getController();
+
+            // Set the article details in the new scene (passing title, description, content)
+            articleViewController.setArticleDetails(article.getTitle(), article.getDescription(), article.getContent(), this.username);
+
+            // Get the current stage (previous window)
+            Stage previousStage = (Stage) articlesListView.getScene().getWindow();
+
+            // Set the new scene with article details
+            previousStage.setScene(new Scene(root, 743, 495));
+            previousStage.show();
+
+            // Log the user's selected article to the database
+            logUserHistory(article);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
     private void logUserHistory(Article article) {
         String url = "jdbc:mysql://localhost:3306/personalizedArticles";
