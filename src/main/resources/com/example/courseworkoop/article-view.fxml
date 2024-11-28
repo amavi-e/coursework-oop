@@ -15,6 +15,7 @@
         <Label fx:id="usernameLabel" layoutX="500.0" layoutY="26.0" styleClass="welcome-name-label" text="" />
         <Button fx:id="likeButton" layoutX="201.0" layoutY="23.0" mnemonicParsing="false" onAction="#onLikeButtonClick" text="Like article" />
         <Button fx:id="dislikeButton" layoutX="297.0" layoutY="23.0" mnemonicParsing="false" onAction="#onDislikeButtonClick" text="Dislike article" />
+      <Button fx:id="skipButton" layoutX="112.0" layoutY="29.0" mnemonicParsing="false" onAction="#onSkipButtonClick" text="Skip" />
 
     </children>
 </AnchorPane>

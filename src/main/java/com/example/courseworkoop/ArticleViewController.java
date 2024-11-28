@@ -23,6 +23,8 @@ public class ArticleViewController{
     @FXML
     public Button dislikeButton;
     @FXML
+    public Button skipButton;
+    @FXML
     private Label titleLabel;
     @FXML
     private Label descriptionLabel;
@@ -183,4 +185,61 @@ public class ArticleViewController{
             e.printStackTrace();
         }
     }
+
+    public void onSkipButtonClick(ActionEvent actionEvent) {
+        String url = "jdbc:mysql://localhost:3306/personalizedArticles";
+        String user = "root";
+        String password = "";
+
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            // Check the current viewCount for the article
+            String checkQuery = "SELECT viewCount FROM UserArticleHistory WHERE username = ? AND articleTitle = ?";
+            try (PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
+                checkStatement.setString(1, username);
+                checkStatement.setString(2, articleTitle);
+
+                try (ResultSet resultSet = checkStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        int viewCount = resultSet.getInt("viewCount");
+
+                        if (viewCount > 1) {
+                            // Decrease the viewCount by 1
+                            String updateQuery = "UPDATE UserArticleHistory SET viewCount = viewCount - 1 WHERE username = ? AND articleTitle = ?";
+                            try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
+                                updateStatement.setString(1, username);
+                                updateStatement.setString(2, articleTitle);
+                                updateStatement.executeUpdate();
+                                System.out.println("ViewCount reduced by 1 for the article.");
+                            }
+                        } else {
+                            // Remove the article from the user's history
+                            String deleteQuery = "DELETE FROM UserArticleHistory WHERE username = ? AND articleTitle = ?";
+                            try (PreparedStatement deleteStatement = connection.prepareStatement(deleteQuery)) {
+                                deleteStatement.setString(1, username);
+                                deleteStatement.setString(2, articleTitle);
+                                deleteStatement.executeUpdate();
+                                System.out.println("Article removed from user history.");
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Redirect to user-view page
+            Stage stage = (Stage) skipButton.getScene().getWindow();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("user-view.fxml"));
+            Parent root = loader.load();
+
+            // Pass the username to the user-view controller
+            UserViewController userViewController = loader.getController();
+            userViewController.setUsername(this.username);
+
+            stage.setScene(new Scene(root, 743, 495));
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
