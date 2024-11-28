@@ -14,14 +14,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserViewController{
+public class UserViewController {
     @FXML
     public Button recommendArticlesButton;
     @FXML
@@ -41,7 +38,6 @@ public class UserViewController{
         populateArticles();
     }
 
-
     private void populateArticles() {
         List<Article> articles = fetchArticles();
         ObservableList<Article> articleObservableList = FXCollections.observableArrayList(articles);
@@ -49,11 +45,6 @@ public class UserViewController{
 
         // Set a custom cell factory to display title and description
         articlesListView.setCellFactory(param -> new ArticleListCell());
-    }
-
-    @FXML
-    public void onRecommendArticleButtonClick(ActionEvent actionEvent) {
-        System.out.println("Recommend Articles button clicked!");
     }
 
     private List<Article> fetchArticles() {
@@ -120,15 +111,12 @@ public class UserViewController{
         }
     }
 
-
     private void logUserHistory(Article article) {
         String url = "jdbc:mysql://localhost:3306/personalizedArticles";
         String user = "root";
         String password = "";
 
-        // First, check if the user has already viewed the article
         String checkQuery = "SELECT viewCount FROM UserArticleHistory WHERE username = ? AND articleTitle = ?";
-
         String insertQuery = "INSERT INTO UserArticleHistory (username, articleTitle, articleCategory, viewCount) VALUES (?, ?, ?, ?)";
         String updateQuery = "UPDATE UserArticleHistory SET viewCount = viewCount + 1 WHERE username = ? AND articleTitle = ?";
 
@@ -140,7 +128,6 @@ public class UserViewController{
 
             try (ResultSet resultSet = checkStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    // If the article is already in the history, update the viewCount
                     int currentViewCount = resultSet.getInt("viewCount");
                     try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
                         updateStatement.setString(1, username);
@@ -149,7 +136,6 @@ public class UserViewController{
                         System.out.println("User history updated successfully. View count: " + (currentViewCount + 1));
                     }
                 } else {
-                    // If the article is not in the history, insert a new record
                     try (PreparedStatement insertStatement = connection.prepareStatement(insertQuery)) {
                         insertStatement.setString(1, username);
                         insertStatement.setString(2, article.getTitle());
@@ -162,6 +148,23 @@ public class UserViewController{
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void onRecommendArticleButtonClick() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("recommendation-view.fxml"));
+            Parent root = loader.load();
+
+            RecommendationController controller = loader.getController();
+            controller.setUsername(this.username);
+            controller.populateRecommendations();
+
+            Stage currentStage = (Stage) recommendArticlesButton.getScene().getWindow();
+            currentStage.setScene(new Scene(root, 800, 600));
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
