@@ -104,7 +104,7 @@ public class RecommendationController {
         List<Article> articles = new ArrayList<>();
         try {
             // Absolute path to the Python script
-            String scriptPath = new File("/Users/ehansagajanayake/Documents/CM2601_OOP/courseworkOOP/src/main/java/com/example/courseworkoop/recommend.py").getAbsolutePath();
+            String scriptPath = new File("/Users/ehansagajanayake/Documents/CM2601_OOP/courseworkOOPPython").getAbsolutePath();
 
             // Use python3 if needed
             ProcessBuilder pb = new ProcessBuilder("python3", scriptPath, username);
