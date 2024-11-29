@@ -7,4 +7,5 @@ module com.example.courseworkoop {
 
     opens com.example.courseworkoop to javafx.fxml;
     exports com.example.courseworkoop;
+
 }
