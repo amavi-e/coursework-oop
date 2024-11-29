@@ -90,6 +90,7 @@ public class ArticleFetcher {
                 String title = article.optString("title", "No Title");
                 String description = article.optString("description", "No Description");
                 String contentText = article.optString("content", "No Content");
+                String urlToArticle = article.optString("url", "No URL");
 
                 // Skip articles with "[removed]" in title, description, or content
                 if (title.equals("[Removed]") || description.equals("[Removed]") || contentText.equals("[Removed]")) {
@@ -107,7 +108,7 @@ public class ArticleFetcher {
                 }
 
                 // Store the article in the database
-                storeArticleInDatabase(title, description, contentText, category);
+                storeArticleInDatabase(title, description, contentText, urlToArticle, category);
             }
 
         } catch (Exception e) {
@@ -187,45 +188,28 @@ public class ArticleFetcher {
         double normB = 0.0;
 
         for (String key : vec1.keySet()) {
-            dotProduct += vec1.get(key) * vec2.getOrDefault(key, 0);
+            dotProduct += vec1.getOrDefault(key, 0) * vec2.getOrDefault(key, 0);
             normA += Math.pow(vec1.get(key), 2);
         }
 
-        for (int value : vec2.values()) {
-            normB += Math.pow(value, 2);
-        }
-
-        if (normA == 0 || normB == 0) {
-            return 0.0;
+        for (String key : vec2.keySet()) {
+            normB += Math.pow(vec2.get(key), 2);
         }
 
         return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
     }
 
-    private void storeArticleInDatabase(String title, String description, String content, String category) {
+    private void storeArticleInDatabase(String title, String description, String content, String url, String category) {
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            // Check if the article already exists in the database based on the title
-            String checkQuery = "SELECT COUNT(*) FROM Articles WHERE title = ?";
-            PreparedStatement checkStatement = connection.prepareStatement(checkQuery);
-            checkStatement.setString(1, title);
-            ResultSet resultSet = checkStatement.executeQuery();
-
-            resultSet.next();
-            int count = resultSet.getInt(1);
-
-            if (count > 0) {
-                System.out.println("Article already exists in database: " + title);
-            } else {
-                // Insert the article if it does not exist
-                String insertQuery = "INSERT INTO Articles (title, description, content, category) VALUES (?, ?, ?, ?)";
-                PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
-                insertStatement.setString(1, title);
-                insertStatement.setString(2, description);
-                insertStatement.setString(3, content);
-                insertStatement.setString(4, category);
-                insertStatement.executeUpdate();
-
-                System.out.println("Stored article in database: " + title + " (" + category + ")");
+            String sql = "INSERT INTO Articles (title, description, content, url, category) VALUES (?, ?, ?, ?, ?)";
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, title);
+                statement.setString(2, description);
+                statement.setString(3, content);
+                statement.setString(4, url);
+                statement.setString(5, category);
+                statement.executeUpdate();
+                System.out.println("Stored article: " + title);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -233,10 +217,9 @@ public class ArticleFetcher {
     }
 
     public static void main(String[] args) {
-        ArticleFetcher fetcher = new ArticleFetcher();
-        fetcher.fetchAndStoreArticles();
+        ArticleFetcher articleFetcher = new ArticleFetcher();
+        articleFetcher.fetchAndStoreArticles();
     }
-
 }
 
 

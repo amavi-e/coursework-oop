@@ -70,7 +70,7 @@ public class RecommendationController {
 
             // Step 3: Fetch articles from preferred categories
             if (!preferredCategories.isEmpty()) {
-                String query = "SELECT title, description, content, category FROM Articles WHERE category IN (" +
+                String query = "SELECT title, description, content, category, url FROM Articles WHERE category IN (" +
                         String.join(",", preferredCategories.stream().map(c -> "?").toArray(String[]::new)) +
                         ") LIMIT 10";
 
@@ -83,8 +83,8 @@ public class RecommendationController {
                         recommendedArticles.add(new Article(
                                 rs.getString("title"),
                                 rs.getString("description"),
-                                rs.getString("content"),
-                                rs.getString("category")
+                                rs.getString("category"),
+                                rs.getString("url") // Added URL here
                         ));
                     }
                 }
@@ -115,8 +115,13 @@ public class RecommendationController {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] details = line.split(",");
-                if (details.length == 3) {
-                    articles.add(new Article(details[0], details[1], "", details[2]));
+                if (details.length == 4) { // Ensure the script provides the URL as well
+                    articles.add(new Article(
+                            details[0], // Title
+                            details[1], // Description
+                            details[2], // Category
+                            details[3]  // URL
+                    ));
                 }
             }
             process.waitFor();
@@ -125,5 +130,4 @@ public class RecommendationController {
         }
         return articles;
     }
-
 }

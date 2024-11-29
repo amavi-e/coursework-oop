@@ -52,7 +52,7 @@ public class UserViewController {
         String user = "root";
         String password = "";
 
-        String query = "SELECT title, description, content, category FROM Articles";
+        String query = "SELECT title, description, url, category FROM Articles";
 
         try (Connection connection = DriverManager.getConnection(url, user, password);
              PreparedStatement statement = connection.prepareStatement(query);
@@ -61,9 +61,9 @@ public class UserViewController {
             while (resultSet.next()) {
                 String title = resultSet.getString("title");
                 String description = resultSet.getString("description");
-                String content = resultSet.getString("content");
+                String articleUrl = resultSet.getString("url");
                 String category = resultSet.getString("category");
-                articles.add(new Article(title, description, content, category));
+                articles.add(new Article(title, description, articleUrl, category));
             }
 
         } catch (Exception e) {
@@ -93,7 +93,7 @@ public class UserViewController {
             ArticleViewController articleViewController = loader.getController();
 
             // Set the article details in the new scene (passing title, description, content)
-            articleViewController.setArticleDetails(article.getTitle(), article.getDescription(), article.getContent(), this.username);
+            articleViewController.setArticleDetails(article.getTitle(), article.getDescription(), article.getUrl(),this.username);
 
             // Get the current stage (previous window)
             Stage previousStage = (Stage) articlesListView.getScene().getWindow();
@@ -167,5 +167,4 @@ public class UserViewController {
             e.printStackTrace();
         }
     }
-
 }

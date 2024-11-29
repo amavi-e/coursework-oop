@@ -15,7 +15,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-public class ArticleViewController{
+public class ArticleViewController {
     @FXML
     public Button backButton;
     @FXML
@@ -29,7 +29,7 @@ public class ArticleViewController{
     @FXML
     private Label descriptionLabel;
     @FXML
-    private Label contentLabel;
+    private Label urlLabel; // Updated label for URL
     @FXML
     protected Label usernameLabel;
 
@@ -38,16 +38,15 @@ public class ArticleViewController{
     private String currentLikeDislikeStatus = "none"; // To track like/dislike status
 
     // Method to set article details along with username
-    public void setArticleDetails(String title, String description, String content, String username) {
+    public void setArticleDetails(String title, String description, String url, String username) { // Updated parameter
         titleLabel.setText(title);
         descriptionLabel.setText("Description: " + description);
-        contentLabel.setText(content);
+        urlLabel.setText("URL: " + url); // Display URL instead of content
         this.username = username; // Store the username
         this.articleTitle = title;
-        setUsername(username);// Store article title
 
-        // Retrieve the current like/dislike status from the database
-        retrieveLikeDislikeStatus();
+        setUsername(username); // Ensure username is displayed in the view
+        retrieveLikeDislikeStatus(); // Fetch current like/dislike status
     }
 
     public void setUsername(String username) {
@@ -56,7 +55,7 @@ public class ArticleViewController{
         }
     }
 
-    // Method to retrieve the current like/dislike status from the database
+    // Rest of the code remains unchanged...
     private void retrieveLikeDislikeStatus() {
         String url = "jdbc:mysql://localhost:3306/personalizedArticles";
         String user = "root";
@@ -80,7 +79,6 @@ public class ArticleViewController{
         }
     }
 
-    // Method to update the button states based on the current status
     private void updateButtonStates() {
         if ("liked".equals(currentLikeDislikeStatus)) {
             likeButton.setStyle("-fx-background-color: #388E3C;"); // Highlight like button
@@ -94,7 +92,6 @@ public class ArticleViewController{
         }
     }
 
-    // Action when back button is clicked
     public void onBackButtonClick(ActionEvent actionEvent) throws IOException {
         Stage previousStage = (Stage) this.backButton.getScene().getWindow();
 
@@ -111,7 +108,6 @@ public class ArticleViewController{
         previousStage.show();
     }
 
-    // Handle Like button click
     public void onLikeButtonClick(ActionEvent actionEvent) {
         if ("liked".equals(currentLikeDislikeStatus)) {
             currentLikeDislikeStatus = "none"; // Un-like the article
@@ -119,14 +115,10 @@ public class ArticleViewController{
             currentLikeDislikeStatus = "liked"; // Like the article
         }
 
-        // Update the database with the new status
         logUserHistory(username, articleTitle, currentLikeDislikeStatus);
-
-        // Update the button states
         updateButtonStates();
     }
 
-    // Handle Dislike button click
     public void onDislikeButtonClick(ActionEvent actionEvent) {
         if ("disliked".equals(currentLikeDislikeStatus)) {
             currentLikeDislikeStatus = "none"; // Un-dislike the article
@@ -134,10 +126,7 @@ public class ArticleViewController{
             currentLikeDislikeStatus = "disliked"; // Dislike the article
         }
 
-        // Update the database with the new status
         logUserHistory(username, articleTitle, currentLikeDislikeStatus);
-
-        // Update the button states
         updateButtonStates();
     }
 
@@ -147,7 +136,6 @@ public class ArticleViewController{
         String password = "";
         String query;
 
-        // Check if the user already has a history record for this article
         String checkQuery = "SELECT * FROM UserArticleHistory WHERE username = ? AND articleTitle = ?";
 
         try (Connection connection = DriverManager.getConnection(url, user, password);
@@ -158,7 +146,6 @@ public class ArticleViewController{
 
             try (ResultSet resultSet = checkStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    // If a record exists, update the existing record
                     query = "UPDATE UserArticleHistory SET likeDislikeStatus = ? WHERE username = ? AND articleTitle = ?";
                     try (PreparedStatement updateStatement = connection.prepareStatement(query)) {
                         updateStatement.setString(1, likeDislikeStatus);
@@ -168,7 +155,6 @@ public class ArticleViewController{
                         System.out.println("User history updated successfully!");
                     }
                 } else {
-                    // If no record exists, insert a new record
                     query = "INSERT INTO UserArticleHistory (username, articleTitle, articleCategory, likeDislikeStatus) VALUES (?, ?, ?, ?)";
                     try (PreparedStatement insertStatement = connection.prepareStatement(query)) {
                         insertStatement.setString(1, username);
@@ -192,7 +178,6 @@ public class ArticleViewController{
         String password = "";
 
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
-            // Check the current viewCount for the article
             String checkQuery = "SELECT viewCount FROM UserArticleHistory WHERE username = ? AND articleTitle = ?";
             try (PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
                 checkStatement.setString(1, username);
@@ -203,7 +188,6 @@ public class ArticleViewController{
                         int viewCount = resultSet.getInt("viewCount");
 
                         if (viewCount > 1) {
-                            // Decrease the viewCount by 1
                             String updateQuery = "UPDATE UserArticleHistory SET viewCount = viewCount - 1 WHERE username = ? AND articleTitle = ?";
                             try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
                                 updateStatement.setString(1, username);
@@ -212,7 +196,6 @@ public class ArticleViewController{
                                 System.out.println("ViewCount reduced by 1 for the article.");
                             }
                         } else {
-                            // Remove the article from the user's history
                             String deleteQuery = "DELETE FROM UserArticleHistory WHERE username = ? AND articleTitle = ?";
                             try (PreparedStatement deleteStatement = connection.prepareStatement(deleteQuery)) {
                                 deleteStatement.setString(1, username);
@@ -225,12 +208,10 @@ public class ArticleViewController{
                 }
             }
 
-            // Redirect to user-view page
             Stage stage = (Stage) skipButton.getScene().getWindow();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("user-view.fxml"));
             Parent root = loader.load();
 
-            // Pass the username to the user-view controller
             UserViewController userViewController = loader.getController();
             userViewController.setUsername(this.username);
 
@@ -241,5 +222,4 @@ public class ArticleViewController{
             e.printStackTrace();
         }
     }
-
 }
