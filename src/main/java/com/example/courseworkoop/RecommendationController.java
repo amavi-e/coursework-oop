@@ -3,11 +3,14 @@ package com.example.courseworkoop;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.stage.Stage;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -20,11 +23,16 @@ import java.util.concurrent.Executors;
 public class RecommendationController {
     @FXML
     public ListView<Article> recommendationsListView;
+    @FXML
+    public Label usernameLabel;
 
     private String username;
 
     public void setUsername(String username) {
         this.username = username;
+        if (usernameLabel != null) {
+            usernameLabel.setText("Welcome, " + username + "!");
+        }
     }
 
     public void populateRecommendations() {
@@ -37,6 +45,14 @@ public class RecommendationController {
 
             // Set a custom cell factory to display articles
             recommendationsListView.setCellFactory(param -> new ArticleListCell());
+
+            // Add event listener for item click
+            recommendationsListView.setOnMouseClicked(event -> {
+                Article selectedArticle = recommendationsListView.getSelectionModel().getSelectedItem();
+                if (selectedArticle != null) {
+                    openArticleView(selectedArticle);
+                }
+            });
         });
         executorService.shutdown();
     }
@@ -48,51 +64,76 @@ public class RecommendationController {
         String password = "";
 
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
-            // Step 1: Fetch user preferences from UserArticleHistory
-            String userHistoryQuery = "SELECT articleCategory, COUNT(*) AS preferenceCount " +
+            // Step 1: Fetch user preferences
+            List<String> viewedCategories = new ArrayList<>();
+            List<String> dislikedCategories = new ArrayList<>();
+            List<Object> parameters = new ArrayList<>();
+
+            String viewQuery = "SELECT articleCategory, COUNT(*) AS viewCount " +
                     "FROM UserArticleHistory " +
-                    "WHERE username = ? AND likeDislikeStatus = 1 " +
+                    "WHERE username = ? AND likeDislikeStatus != 0 " +  // Exclude disliked categories
                     "GROUP BY articleCategory " +
-                    "ORDER BY preferenceCount DESC";
-            List<String> preferredCategories = new ArrayList<>();
+                    "ORDER BY viewCount DESC";
+            String dislikeQuery = "SELECT DISTINCT articleCategory FROM UserArticleHistory " +
+                    "WHERE username = ? AND likeDislikeStatus = 0";
 
-            try (PreparedStatement userHistoryStmt = connection.prepareStatement(userHistoryQuery)) {
-                userHistoryStmt.setString(1, this.username);
-                ResultSet rs = userHistoryStmt.executeQuery();
-
+            // Fetch categories viewed by the user
+            try (PreparedStatement viewStmt = connection.prepareStatement(viewQuery)) {
+                viewStmt.setString(1, this.username);
+                ResultSet rs = viewStmt.executeQuery();
                 while (rs.next()) {
-                    preferredCategories.add(rs.getString("articleCategory"));
+                    viewedCategories.add(rs.getString("articleCategory"));
                 }
             }
 
-            // Step 2: Call Python script for ML recommendations
-            List<Article> mlRecommendedArticles = callPythonRecommendationScript(this.username);
-
-            // Step 3: Fetch articles from preferred categories
-            if (!preferredCategories.isEmpty()) {
-                String query = "SELECT title, description, content, category, url FROM Articles WHERE category IN (" +
-                        String.join(",", preferredCategories.stream().map(c -> "?").toArray(String[]::new)) +
-                        ") LIMIT 10";
-
-                try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                    for (int i = 0; i < preferredCategories.size(); i++) {
-                        stmt.setString(i + 1, preferredCategories.get(i));
-                    }
-                    ResultSet rs = stmt.executeQuery();
-                    while (rs.next()) {
-                        recommendedArticles.add(new Article(
-                                rs.getString("title"),
-                                rs.getString("description"),
-                                rs.getString("category"),
-                                rs.getString("url") // Added URL here
-                        ));
-                    }
+            // Fetch categories disliked by the user
+            try (PreparedStatement dislikeStmt = connection.prepareStatement(dislikeQuery)) {
+                dislikeStmt.setString(1, this.username);
+                ResultSet rs = dislikeStmt.executeQuery();
+                while (rs.next()) {
+                    dislikedCategories.add(rs.getString("articleCategory"));
                 }
             }
 
-            // Combine ML recommendations with category-based recommendations
-            recommendedArticles.addAll(mlRecommendedArticles);
+            // Step 2: Build SQL query for recommendations
+            StringBuilder queryBuilder = new StringBuilder("SELECT title, description, content, category, url FROM Articles WHERE ");
+            List<String> conditions = new ArrayList<>();
 
+            if (!viewedCategories.isEmpty()) {
+                String viewedCondition = "category IN (" + String.join(",", viewedCategories.stream().map(c -> "?").toArray(String[]::new)) + ")";
+                conditions.add(viewedCondition);
+                parameters.addAll(viewedCategories);
+            }
+
+            if (!dislikedCategories.isEmpty()) {
+                String dislikedCondition = "category NOT IN (" + String.join(",", dislikedCategories.stream().map(c -> "?").toArray(String[]::new)) + ")";
+                conditions.add(dislikedCondition);
+                parameters.addAll(dislikedCategories);
+            }
+
+            if (conditions.isEmpty()) {
+                // No preferences found; return an empty list or a default set of recommendations
+                return recommendedArticles;
+            }
+
+            queryBuilder.append(String.join(" AND ", conditions)).append(" ORDER BY RAND() LIMIT 10");
+
+            // Step 3: Execute query
+            try (PreparedStatement stmt = connection.prepareStatement(queryBuilder.toString())) {
+                for (int i = 0; i < parameters.size(); i++) {
+                    stmt.setString(i + 1, parameters.get(i).toString());
+                }
+
+                ResultSet rs = stmt.executeQuery();
+                while (rs.next()) {
+                    recommendedArticles.add(new Article(
+                            rs.getString("title"),
+                            rs.getString("description"),
+                            rs.getString("category"),
+                            rs.getString("url")
+                    ));
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -100,34 +141,20 @@ public class RecommendationController {
         return recommendedArticles;
     }
 
-    private List<Article> callPythonRecommendationScript(String username) {
-        List<Article> articles = new ArrayList<>();
+    private void openArticleView(Article article) {
         try {
-            // Absolute path to the Python script
-            String scriptPath = new File("/Users/ehansagajanayake/Documents/CM2601_OOP/courseworkOOPPython").getAbsolutePath();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("article-view.fxml"));
+            Parent root = loader.load();
 
-            // Use python3 if needed
-            ProcessBuilder pb = new ProcessBuilder("python3", scriptPath, username);
-            pb.redirectErrorStream(true);
+            // Get controller and pass article details and username
+            ArticleViewController articleViewController = loader.getController();
+            articleViewController.setArticleDetails(article.getTitle(), article.getDescription(), article.getUrl(),this.username);
 
-            Process process = pb.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] details = line.split(",");
-                if (details.length == 4) { // Ensure the script provides the URL as well
-                    articles.add(new Article(
-                            details[0], // Title
-                            details[1], // Description
-                            details[2], // Category
-                            details[3]  // URL
-                    ));
-                }
-            }
-            process.waitFor();
-        } catch (Exception e) {
+            // Set the scene for the article view
+            Stage stage = (Stage) recommendationsListView.getScene().getWindow();
+            stage.setScene(new Scene(root, 743, 495));
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        return articles;
     }
 }
