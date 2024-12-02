@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="495.0" prefWidth="743.0" stylesheets="@userViewCSS.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.courseworkoop.AdminDashboardController">
+    <children>
+        <Label fx:id="usernameLabel" layoutX="538.0" layoutY="21.0" prefHeight="19.0" prefWidth="185.0" styleClass="welcome-name-label" text="" />
+        <Label layoutX="199.0" layoutY="27.0" styleClass="title-label" text="Hi! You can manage articles and users now" />
+    </children>
+</AnchorPane>

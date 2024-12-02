@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="400.0" prefWidth="516.0" stylesheets="@signUpCSS.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.courseworkoop.AdminSignUpPageController">
+    <children>
+        <Label layoutX="151.0" layoutY="37.0" prefHeight="28.0" prefWidth="205.0" styleClass="title-label" text="Admin Sign Up Portal" />
+        <Label layoutX="178.0" layoutY="65.0" text="Create your Admin Account" />
+        <Label layoutX="110.0" layoutY="106.0" text="Username :" />
+        <TextField fx:id="userNameFieldSignUp" layoutX="110.0" layoutY="134.0" prefHeight="26.0" prefWidth="286.0" promptText="Please create a username" styleClass="text-field" />
+        <Label layoutX="110.0" layoutY="183.0" text="Password :" />
+        <Button fx:id="signUpFinalButton" layoutX="223.0" layoutY="256.0" mnemonicParsing="false" onAction="#onSignUpFinalButtonClick" text="Sign up" />
+        <Label layoutX="123.0" layoutY="324.0" text="Already have an account?" />
+        <Button fx:id="signInCreateAccountButton" layoutX="258.0" layoutY="316.0" mnemonicParsing="false" onAction="#onSignInCreateAccountClick" text="Sign in" />
+        <PasswordField fx:id="passwordFieldSignUp" layoutX="110.0" layoutY="210.0" prefHeight="29.0" prefWidth="286.0" promptText="Enter a secure password" />
+    </children>
+</AnchorPane>
