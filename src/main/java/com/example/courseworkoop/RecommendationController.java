@@ -2,10 +2,12 @@ package com.example.courseworkoop;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
@@ -25,6 +27,8 @@ public class RecommendationController {
     public ListView<Article> recommendationsListView;
     @FXML
     public Label usernameLabel;
+    @FXML
+    public Button backButton;
 
     private String username;
 
@@ -156,5 +160,21 @@ public class RecommendationController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void onBackButtonClick(ActionEvent actionEvent) throws IOException {
+        Stage previousStage = (Stage) this.backButton.getScene().getWindow();
+
+        // Load the user-view.fxml
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("user-view.fxml"));
+        Parent root = loader.load();
+
+        // Get the controller for UserViewController and pass the username
+        UserViewController userViewController = loader.getController();
+        userViewController.setUsername(this.username); // Ensure the username is passed to the UserViewController
+
+        // Set the scene and show the previous stage
+        previousStage.setScene(new Scene(root, 743, 495));
+        previousStage.show();
     }
 }

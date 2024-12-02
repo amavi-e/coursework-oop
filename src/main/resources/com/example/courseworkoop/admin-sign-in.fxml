@@ -8,14 +8,14 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="331.0" stylesheets="@signInCSS.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.courseworkoop.AdminSignInPageController">
     <children>
-        <Label layoutX="86.0" layoutY="53.0" styleClass="title-label" text="Sign in" />
+        <Label layoutX="86.0" layoutY="53.0" prefHeight="26.0" prefWidth="173.0" styleClass="title-label" text="Admin Sign in Portal" />
         <Label layoutX="86.0" layoutY="86.0" text="Good to see you again!" />
         <Label layoutX="86.0" layoutY="136.0" text="Username : " />
-        <TextField fx:id="usernameSignInPage" layoutX="86.0" layoutY="163.0"/>
+        <TextField fx:id="usernameSignInPage" layoutX="86.0" layoutY="163.0" />
         <Label layoutX="86.0" layoutY="209.0" text="Password :" />
         <Button fx:id="signInButtonFinal" layoutX="119.0" layoutY="281.0" mnemonicParsing="false" onAction="#OnSignInButtonFinalClick" text="Sign in" />
         <Label layoutX="51.0" layoutY="366.0" text="Don't have an account?" />
-        <Button fx:id="signUpLoginPageButton" layoutX="188.0" layoutY="358.0" mnemonicParsing="false" onAction="#onSignUpLoginPageButtonClick" text="Sign up" />
+        <Button fx:id="signUpLoginPageButton" layoutX="171.0" layoutY="358.0" mnemonicParsing="false" onAction="#onSignUpLoginPageButtonClick" prefHeight="33.0" prefWidth="79.0" text="Sign up" />
         <PasswordField fx:id="passwordSignInPage" layoutX="86.0" layoutY="231.0" />
         <Button fx:id="forgotPasswordButton" layoutX="88.0" layoutY="325.0" mnemonicParsing="false" onAction="#onForgotPasswordButtonClick" text="Forgot Password?" />
     </children>
