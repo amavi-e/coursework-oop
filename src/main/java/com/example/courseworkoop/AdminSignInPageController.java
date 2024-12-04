@@ -48,7 +48,7 @@ public class AdminSignInPageController {
             adminDashboardController.setUsername(username);
 
             Stage stage = (Stage) signInButtonFinal.getScene().getWindow();
-            stage.setScene(new Scene(root, 743, 495));
+            stage.setScene(new Scene(root, 743, 165));
             stage.show();
         } else {
             showAlert("Error", "Invalid username or password.");

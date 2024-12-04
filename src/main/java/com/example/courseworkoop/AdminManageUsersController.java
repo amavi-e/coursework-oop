@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -27,6 +28,8 @@ public class AdminManageUsersController {
     public ListView<String> usersListView; // Update to ListView<String> for proper display
     @FXML
     public Button deleteAllUsersButton;
+    @FXML
+    public Button backButton;
 
     private String username;
 
@@ -114,5 +117,18 @@ public class AdminManageUsersController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void onBackButtonClick(ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("admin-dashboard.fxml"));
+        Parent root = loader.load();
+
+        // Pass the username to UserViewController
+        AdminDashboardController adminDashboardController = loader.getController();
+        adminDashboardController.setUsername(username);
+
+        Stage stage = (Stage) backButton.getScene().getWindow();
+        stage.setScene(new Scene(root, 743, 165));
+        stage.show();
     }
 }

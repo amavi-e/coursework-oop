@@ -61,7 +61,7 @@ public class AdminSignUpPageController {
         adminDashboardController.setUsername(username);
 
         Stage stage = (Stage) signUpFinalButton.getScene().getWindow();
-        stage.setScene(new Scene(root, 743, 495));
+        stage.setScene(new Scene(root, 743, 165));
         stage.show();
 
         // Clear fields after successful registration

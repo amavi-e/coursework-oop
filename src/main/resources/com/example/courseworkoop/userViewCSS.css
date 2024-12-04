@@ -79,5 +79,12 @@
     -fx-cursor: hand; /* Pointer cursor */
 }
 
+#backButton {
+    -fx-background-color: transparent;
+    -fx-text-fill: #3498db;
+    -fx-underline: true;
+    -fx-cursor: hand;
+}
+
 
 

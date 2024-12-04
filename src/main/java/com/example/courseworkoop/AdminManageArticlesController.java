@@ -25,6 +25,8 @@ public class AdminManageArticlesController {
     public ListView<Article> articlesListView; 
     @FXML
     public Button deleteAllArticlesButton;
+    @FXML
+    public Button backButton;
 
     private String username;
 
@@ -147,4 +149,16 @@ public class AdminManageArticlesController {
         }
     }
 
+    public void onBackButtonClick(ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("admin-dashboard.fxml"));
+        Parent root = loader.load();
+
+        // Pass the username to UserViewController
+        AdminDashboardController adminDashboardController = loader.getController();
+        adminDashboardController.setUsername(username);
+
+        Stage stage = (Stage) backButton.getScene().getWindow();
+        stage.setScene(new Scene(root, 743, 165));
+        stage.show();
+    }
 }
