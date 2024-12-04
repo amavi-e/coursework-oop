@@ -11,6 +11,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class AdminArticleViewController {
     @FXML
@@ -23,6 +27,8 @@ public class AdminArticleViewController {
     private Label urlLabel; // URL label to display the article URL
     @FXML
     private Button backButton;
+    @FXML
+    private Button deleteButton;
 
     private String title;
     private String description;
@@ -58,15 +64,59 @@ public class AdminArticleViewController {
     // Method to go back to the previous screen
     @FXML
     public void onBackButtonClick(ActionEvent actionEvent) throws IOException {
-        Stage previousStage = (Stage) backButton.getScene().getWindow();
+        redirectToManageArticlesScreen();
+    }
+
+    // Method to handle the delete article button click
+    @FXML
+    public void onDeleteArticleButtonClick(ActionEvent actionEvent) {
+        if (deleteArticleFromDatabase()) {
+            try {
+                redirectToManageArticlesScreen();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // Method to delete the article from the database
+    private boolean deleteArticleFromDatabase() {
+        String url = "jdbc:mysql://localhost:3306/personalizedArticles";
+        String user = "root";
+        String password = "";
+
+        String deleteQuery = "DELETE FROM Articles WHERE title = ?";
+
+        try (Connection connection = DriverManager.getConnection(url, user, password);
+             PreparedStatement statement = connection.prepareStatement(deleteQuery)) {
+
+            statement.setString(1, title);
+            int rowsAffected = statement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("Article deleted successfully: " + title);
+                return true;
+            } else {
+                System.out.println("Failed to delete article: " + title);
+                return false;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Method to redirect to the manage articles screen
+    private void redirectToManageArticlesScreen() throws IOException {
+        Stage previousStage = (Stage) deleteButton.getScene().getWindow();
 
         // Load the admin articles management screen
         FXMLLoader loader = new FXMLLoader(getClass().getResource("admin-manage-articles.fxml"));
         Parent root = loader.load();
 
         AdminManageArticlesController adminManageArticlesController = loader.getController();
-        // Set the username or pass any data if needed
-        adminManageArticlesController.setUsername("Admin");
+        adminManageArticlesController.setUsername(username);
 
         // Set the scene and show the stage
         previousStage.setScene(new Scene(root, 743, 495));

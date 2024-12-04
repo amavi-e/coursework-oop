@@ -8,6 +8,7 @@
     <children>
         <Label fx:id="usernameLabel" layoutX="538.0" layoutY="21.0" prefHeight="19.0" prefWidth="185.0" styleClass="welcome-name-label" text="" />
         <Label layoutX="199.0" layoutY="27.0" styleClass="title-label" text="Hi! You can manage articles and users now" />
-      <Button fx:id="manageArticlesButton" layoutX="263.0" layoutY="248.0" mnemonicParsing="false" onAction="#onManageArticlesButton" text="Manage Articles" />
+        <Button fx:id="manageArticlesButton" layoutX="263.0" layoutY="248.0" mnemonicParsing="false" onAction="#onManageArticlesButton" text="Manage Articles" />
+        <Button fx:id="manageUsersButton" layoutX="263.0" layoutY="248.0" mnemonicParsing="false" onAction="#onManageUsersButton" text="Manage Users" />
     </children>
 </AnchorPane>

@@ -86,3 +86,24 @@
     -fx-background-color: #D32F2F;
     -fx-text-fill: #ffffff;
 }
+
+/*For delete button*/
+#deleteButton, #deleteUserButton {
+    -fx-background-color: #2e86c1;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-border-radius: 5px;
+    -fx-padding: 8px 16px;
+}
+
+#deleteButton:hover, #deleteUserButton{
+    -fx-background-color: #21618c;
+}
+
+
+.article-url-label {
+    -fx-background-color: transparent;
+    -fx-text-fill: #3498db;
+    -fx-underline: true;
+    -fx-cursor: hand;
+}

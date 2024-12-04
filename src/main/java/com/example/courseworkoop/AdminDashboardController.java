@@ -17,6 +17,8 @@ public class AdminDashboardController {
     public Label usernameLabel;
     @FXML
     public Button manageArticlesButton;
+    @FXML
+    public Button manageUsersButton;
 
     private String username;
 
@@ -35,6 +37,19 @@ public class AdminDashboardController {
         // Pass the username to UserViewController
         AdminManageArticlesController adminManageArticlesController = loader.getController();
         adminManageArticlesController.setUsername(username);
+
+        Stage stage = (Stage) manageArticlesButton.getScene().getWindow();
+        stage.setScene(new Scene(root, 743, 495));
+        stage.show();
+    }
+
+    public void onManageUsersButton(ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("admin-manage-users.fxml"));
+        Parent root = loader.load();
+
+        // Pass the username to UserViewController
+        AdminManageUsersController adminManageUsersController = loader.getController();
+        adminManageUsersController.setUsername(username);
 
         Stage stage = (Stage) manageArticlesButton.getScene().getWindow();
         stage.setScene(new Scene(root, 743, 495));
