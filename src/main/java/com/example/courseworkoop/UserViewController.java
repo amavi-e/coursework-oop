@@ -2,6 +2,7 @@ package com.example.courseworkoop;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -24,6 +25,12 @@ public class UserViewController {
     public Label usernameLabel;
     @FXML
     public ListView<Article> articlesListView;
+    @FXML
+    public Button signInButton;
+    @FXML
+    public Button signUpButton;
+    @FXML
+    public Button logOutButton;
 
     private String username;
 
@@ -99,7 +106,7 @@ public class UserViewController {
             Stage previousStage = (Stage) articlesListView.getScene().getWindow();
 
             // Set the new scene with article details
-            previousStage.setScene(new Scene(root, 743, 495));
+            previousStage.setScene(new Scene(root, 743, 558));
             previousStage.show();
 
             // Log the user's selected article to the database
@@ -162,9 +169,30 @@ public class UserViewController {
             controller.populateRecommendations();
 
             Stage currentStage = (Stage) recommendArticlesButton.getScene().getWindow();
-            currentStage.setScene(new Scene(root, 800, 600));
+            currentStage.setScene(new Scene(root, 743, 558));
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void onSignInButtonClick(ActionEvent actionEvent) throws IOException {
+        Stage previousStage = (Stage)this.signInButton.getScene().getWindow();
+        Parent root = (Parent)FXMLLoader.load(this.getClass().getResource("sign-in-page.fxml"));
+        previousStage.setScene(new Scene(root, 331, 400));
+        previousStage.show();
+    }
+
+    public void onSignUpButtonClick(ActionEvent actionEvent) throws IOException {
+        Stage previousStage = (Stage)this.signUpButton.getScene().getWindow();
+        Parent root = (Parent)FXMLLoader.load(this.getClass().getResource("sign-up-page.fxml"));
+        previousStage.setScene(new Scene(root, 516, 400));
+        previousStage.show();
+    }
+
+    public void onLogOutButtonClick(ActionEvent actionEvent) throws IOException {
+        Stage previousStage = (Stage)this.logOutButton.getScene().getWindow();
+        Parent root = (Parent)FXMLLoader.load(this.getClass().getResource("portal-selection-page.fxml"));
+        previousStage.setScene(new Scene(root, 476, 167));
+        previousStage.show();
     }
 }

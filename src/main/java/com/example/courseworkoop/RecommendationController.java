@@ -29,6 +29,12 @@ public class RecommendationController {
     public Label usernameLabel;
     @FXML
     public Button backButton;
+    @FXML
+    public Button signInButton;
+    @FXML
+    public Button signUpButton;
+    @FXML
+    public Button logOutButton;
 
     private String username;
 
@@ -156,7 +162,7 @@ public class RecommendationController {
 
             // Set the scene for the article view
             Stage stage = (Stage) recommendationsListView.getScene().getWindow();
-            stage.setScene(new Scene(root, 743, 495));
+            stage.setScene(new Scene(root, 743, 558));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -175,6 +181,27 @@ public class RecommendationController {
 
         // Set the scene and show the previous stage
         previousStage.setScene(new Scene(root, 743, 495));
+        previousStage.show();
+    }
+
+    public void onSignInButtonClick(ActionEvent actionEvent) throws IOException {
+        Stage previousStage = (Stage)this.signInButton.getScene().getWindow();
+        Parent root = (Parent)FXMLLoader.load(this.getClass().getResource("sign-in-page.fxml"));
+        previousStage.setScene(new Scene(root, 331, 400));
+        previousStage.show();
+    }
+
+    public void onSignUpButtonClick(ActionEvent actionEvent) throws IOException {
+        Stage previousStage = (Stage)this.signUpButton.getScene().getWindow();
+        Parent root = (Parent)FXMLLoader.load(this.getClass().getResource("sign-up-page.fxml"));
+        previousStage.setScene(new Scene(root, 516, 400));
+        previousStage.show();
+    }
+
+    public void onLogOutButtonClick(ActionEvent actionEvent) throws IOException {
+        Stage previousStage = (Stage)this.logOutButton.getScene().getWindow();
+        Parent root = (Parent)FXMLLoader.load(this.getClass().getResource("portal-selection-page.fxml"));
+        previousStage.setScene(new Scene(root, 476, 167));
         previousStage.show();
     }
 }

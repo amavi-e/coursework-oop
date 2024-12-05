@@ -101,9 +101,10 @@
 }
 
 
-.article-url-label {
+.article-url-label, .top-button {
     -fx-background-color: transparent;
     -fx-text-fill: #3498db;
     -fx-underline: true;
     -fx-cursor: hand;
 }
+

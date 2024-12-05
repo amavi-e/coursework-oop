@@ -6,14 +6,17 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@articleViewCSS.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.courseworkoop.ArticleViewController">
     <children>
-        <Label fx:id="titleLabel" layoutX="25.0" layoutY="74.0" maxWidth="550.0" styleClass="article-title-label" text="Title" wrapText="true" />
-        <Label fx:id="descriptionLabel" layoutX="25.0" layoutY="156.0" maxWidth="550.0" styleClass="article-description-label" text="Description" wrapText="true" />
-        <Label fx:id="urlLabel" layoutX="25.0" layoutY="232.0" text="URL" />
-        <Button fx:id="backButton" layoutX="24.0" layoutY="21.0" mnemonicParsing="false" onAction="#onBackButtonClick" text="Back" />
-        <Label fx:id="usernameLabel" layoutX="500.0" layoutY="26.0" styleClass="welcome-name-label" text="" />
-        <Button fx:id="likeButton" layoutX="201.0" layoutY="23.0" mnemonicParsing="false" onAction="#onLikeButtonClick" text="Like article" />
-        <Button fx:id="dislikeButton" layoutX="297.0" layoutY="23.0" mnemonicParsing="false" onAction="#onDislikeButtonClick" text="Dislike article" />
-      <Button fx:id="skipButton" layoutX="112.0" layoutY="29.0" mnemonicParsing="false" onAction="#onSkipButtonClick" text="Skip" />
+        <Label fx:id="titleLabel" layoutX="24.0" layoutY="128.0" maxWidth="550.0" styleClass="article-title-label" text="Title" wrapText="true" />
+        <Label fx:id="descriptionLabel" layoutX="34.0" layoutY="286.0" maxWidth="550.0" styleClass="article-description-label" text="Description" wrapText="true" />
+        <Label fx:id="urlLabel" layoutX="34.0" layoutY="221.0" text="URL" />
+        <Button fx:id="backButton" layoutX="36.0" layoutY="34.0" mnemonicParsing="false" onAction="#onBackButtonClick" text="Back" />
+        <Label fx:id="usernameLabel" layoutX="500.0" layoutY="38.0" styleClass="welcome-name-label" text="" />
+        <Button fx:id="likeButton" layoutX="204.0" layoutY="80.0" mnemonicParsing="false" onAction="#onLikeButtonClick" text="Like article" />
+        <Button fx:id="dislikeButton" layoutX="300.0" layoutY="80.0" mnemonicParsing="false" onAction="#onDislikeButtonClick" text="Dislike article" />
+      <Button fx:id="skipButton" layoutX="107.0" layoutY="86.0" mnemonicParsing="false" onAction="#onSkipButtonClick" text="Skip" />
+        <Button fx:id="signInButton" layoutX="177.0" layoutY="34.0" mnemonicParsing="false" onAction="#onSignInButtonClick" styleClass="top-button" text="Sign In" />
+        <Button fx:id="signUpButton" layoutX="253.0" layoutY="32.0" mnemonicParsing="false" onAction="#onSignUpButtonClick" styleClass="top-button" text="Sign Up" />
+        <Button fx:id="logOutButton" layoutX="336.0" layoutY="32.0" mnemonicParsing="false" onAction="#onLogOutButtonClick" styleClass="top-button" text="Log Out" />
 
     </children>
 </AnchorPane>

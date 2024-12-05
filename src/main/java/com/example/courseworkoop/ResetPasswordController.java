@@ -48,7 +48,7 @@ public class ResetPasswordController {
                 userController.setUsername(username);
 
                 Stage stage = (Stage) resetPasswordButton.getScene().getWindow();
-                stage.setScene(new Scene(root, 743, 495));
+                stage.setScene(new Scene(root, 743, 558));
                 stage.show();
             } else {
                 showAlert("Error", "Failed to update password. Please try again.");

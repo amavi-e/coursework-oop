@@ -49,7 +49,7 @@ public class SignInPageController {
             userController.setUsername(username);
 
             Stage stage = (Stage) signInButtonFinal.getScene().getWindow();
-            stage.setScene(new Scene(root, 743, 495));
+            stage.setScene(new Scene(root, 743, 558));
             stage.show();
         }
         else {

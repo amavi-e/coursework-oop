@@ -25,6 +25,12 @@ public class ArticleViewController {
     @FXML
     public Button skipButton;
     @FXML
+    public Button signInButton;
+    @FXML
+    public Button signUpButton;
+    @FXML
+    public Button logOutButton;
+    @FXML
     private Label titleLabel;
     @FXML
     private Label descriptionLabel;
@@ -104,7 +110,7 @@ public class ArticleViewController {
         userViewController.setUsername(this.username); // Ensure the username is passed to the UserViewController
 
         // Set the scene and show the previous stage
-        previousStage.setScene(new Scene(root, 743, 495));
+        previousStage.setScene(new Scene(root, 743, 558));
         previousStage.show();
     }
 
@@ -221,5 +227,26 @@ public class ArticleViewController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void onSignInButtonClick(ActionEvent actionEvent) throws IOException {
+        Stage previousStage = (Stage)this.signInButton.getScene().getWindow();
+        Parent root = (Parent)FXMLLoader.load(this.getClass().getResource("sign-in-page.fxml"));
+        previousStage.setScene(new Scene(root, 331, 400));
+        previousStage.show();
+    }
+
+    public void onSignUpButtonClick(ActionEvent actionEvent) throws IOException {
+        Stage previousStage = (Stage)this.signUpButton.getScene().getWindow();
+        Parent root = (Parent)FXMLLoader.load(this.getClass().getResource("sign-up-page.fxml"));
+        previousStage.setScene(new Scene(root, 516, 400));
+        previousStage.show();
+    }
+
+    public void onLogOutButtonClick(ActionEvent actionEvent) throws IOException {
+        Stage previousStage = (Stage)this.logOutButton.getScene().getWindow();
+        Parent root = (Parent)FXMLLoader.load(this.getClass().getResource("portal-selection-page.fxml"));
+        previousStage.setScene(new Scene(root, 476, 167));
+        previousStage.show();
     }
 }
