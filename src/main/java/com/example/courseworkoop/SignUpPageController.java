@@ -22,43 +22,53 @@ public class SignUpPageController {
     public TextField userNameFieldSignUp;
     @FXML
     public TextField passwordFieldSignUp;
+    @FXML
+    public TextField fullNameField;
 
     /* ^ is the start of the string, a-z0-9_ is a to z or 0 to 9 or underscore,+ ensures that one or more characters
     from the specified set is present, $ is the end of the string */
     private static final Pattern VALID_USERNAME_PATTERN = Pattern.compile("^[a-z0-9_]+$");
 
-    public void onSignUpFinalButtonClick(ActionEvent actionEvent) throws IOException {
-        String username = userNameFieldSignUp.getText(); //get username field
-        String password = passwordFieldSignUp.getText(); //get password field
 
-        //check if fields are empty
-        if (username.isEmpty() || password.isEmpty()) {
-            showAlert("Error", "Username and password cannot be empty.");
+    public void onSignUpFinalButtonClick(ActionEvent actionEvent) throws IOException {
+        String username = userNameFieldSignUp.getText(); // Get username field
+        String password = passwordFieldSignUp.getText(); // Get password field
+        String fullName = fullNameField.getText(); // Get full name field
+
+        // Check if fields are empty
+        if (username.isEmpty() || password.isEmpty() || fullName.isEmpty()) {
+            showAlert("Error", "Full name, username, and password cannot be empty.");
             return;
         }
 
-        //validate username format
+        // Validate username format
         if (!isValidUsername(username)) {
-            showAlert("Error", "Username must contain only lowercase letters and numbers, without spaces or special characters.");
+            showAlert("Error", "Username must contain only lowercase letters, numbers, or underscores, without spaces or special characters.");
             return;
         }
 
         DatabaseManager dbManager = new DatabaseManager();
 
-        //check if username already exists
+        // Check if username already exists
         if (dbManager.usernameExists(username)) {
-            showAlert("Error", "Username already exists. Please choose a different username.");
+            showAlert("Error", "This username is already taken. Please choose a different username.");
             return;
         }
 
-        //create a new User object and register it to the system
-        User newUser = new User(username, password);
-        dbManager.registerUser(newUser.getUsername(), newUser.getPassword());
+        // Check if user is already registered
+        if (dbManager.userAlreadyRegistered(fullName, username, password)) {
+            showAlert("Error", "An account with this full name, username, and password already exists. Please log in.");
+            return;
+        }
+
+        // Create a new User object and register it to the system
+        User newUser = new User(fullName, username, password);
+        dbManager.registerUser(newUser.getFullName(), newUser.getUsername(), newUser.getPassword());
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("user-view.fxml"));
         Parent root = loader.load();
 
-        //pass the new User object to UserViewController
+        // Pass the new User object to UserViewController
         UserViewController userController = loader.getController();
         userController.setUser(newUser);
 
@@ -66,7 +76,8 @@ public class SignUpPageController {
         stage.setScene(new Scene(root, 743, 558));
         stage.show();
 
-        //clear fields after successful registration
+        // Clear fields after successful registration
+        fullNameField.clear();
         userNameFieldSignUp.clear();
         passwordFieldSignUp.clear();
     }

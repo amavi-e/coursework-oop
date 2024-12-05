@@ -54,14 +54,15 @@ public class DatabaseManager {
         return false;
     }
 
-    //method to register a new user in the UserDetails table
-    public void registerUser(String username, String password) {
-        String insertQuery = "INSERT INTO UserDetails (Username, password) VALUES (?, ?)"; // ? - placeholders
+    // Method to register a new user with full name, username, and password
+    public void registerUser(String fullName, String username, String password) {
+        String insertQuery = "INSERT INTO UserDetails (FullName, Username, password) VALUES (?, ?, ?)";
         try (Connection conn = connect();
              PreparedStatement stmt = conn.prepareStatement(insertQuery)) {
 
-            stmt.setString(1, username); //set value for username
-            stmt.setString(2, password); //set value for password
+            stmt.setString(1, fullName);  // Set value for full name
+            stmt.setString(2, username); // Set value for username
+            stmt.setString(3, password); // Set value for password
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -150,5 +151,26 @@ public class DatabaseManager {
             e.printStackTrace();
             return false;
         }
+    }
+
+    // Method to check if a user with the same full name, username, and password already exists
+    public boolean userAlreadyRegistered(String fullName, String username, String password) {
+        String query = "SELECT COUNT(*) FROM UserDetails WHERE FullName = ? AND Username = ? AND password = ?";
+        try (Connection conn = connect();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, fullName);  // Set the full name parameter
+            stmt.setString(2, username); // Set the username parameter
+            stmt.setString(3, password); // Set the password parameter
+            ResultSet rs = stmt.executeQuery();
+
+            // Check if a matching user exists
+            if (rs.next()) {
+                return rs.getInt(1) > 0; // Return true if count > 0
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

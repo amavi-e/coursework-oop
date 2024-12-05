@@ -3,30 +3,40 @@ package com.example.courseworkoop;
 public class User {
     private String username;
     private String password;
+    private String FullName;
 
-    // Constructor
+    public User(String FullName, String username, String password) {
+        this.username = username;
+        this.password = password;
+        this.FullName = FullName;
+    }
+
     public User(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    // Getter for username
     public String getUsername() {
         return username;
     }
 
-    // Setter for username
     public void setUsername(String username) {
         this.username = username;
     }
 
-    // Getter for password
     public String getPassword() {
         return password;
     }
 
-    // Setter for password
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getFullName() {
+        return FullName;
+    }
+
+    public void setFullName(String fullName) {
+        FullName = fullName;
     }
 }
