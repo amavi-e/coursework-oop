@@ -8,10 +8,12 @@
 <AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@userViewCSS.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.courseworkoop.AdminManageArticlesController">
     <children>
         <Label fx:id="usernameLabel" layoutX="495.0" layoutY="18.0" prefHeight="19.0" prefWidth="169.0" styleClass="welcome-name-label" text="" />
-        <Label layoutX="264.0" layoutY="28.0" styleClass="title-label" text="Manage Articles" />
-        <ListView fx:id="articlesListView" AnchorPane.topAnchor="60.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.bottomAnchor="60.0" onMouseClicked="#onArticleClicked"/>
-        <Button fx:id="deleteAllArticlesButton" text="Delete All Articles" onAction="#onDeleteAllArticlesButton"
-                AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.bottomAnchor="20.0" prefHeight="30.0" />
+        <Label layoutX="265.0" layoutY="41.0" styleClass="title-label" text="Manage Articles" />
+        <ListView fx:id="articlesListView" layoutX="30.0" layoutY="74.0" onMouseClicked="#onArticleClicked" prefHeight="268.0" prefWidth="605.0" AnchorPane.bottomAnchor="58.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="74.0" />
+        <Button fx:id="deleteAllArticlesButton" layoutX="20.0" layoutY="353.0" onAction="#onDeleteAllArticlesButton" prefHeight="30.0" text="Delete All Articles" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
         <Button fx:id="backButton" layoutX="24.0" layoutY="21.0" mnemonicParsing="false" onAction="#onBackButtonClick" text="Back" />
+        <Button fx:id="signInButton" layoutX="167.0" layoutY="5.0" mnemonicParsing="false" onAction="#onSignInButtonClick" styleClass="top-button" text="Sign In" />
+        <Button fx:id="signUpButton" layoutX="256.0" layoutY="5.0" mnemonicParsing="false" onAction="#onSignUpButtonClick" styleClass="top-button" text="Sign Up" />
+        <Button fx:id="logOutButton" layoutX="363.0" layoutY="5.0" mnemonicParsing="false" onAction="#onLogOutButtonClick" styleClass="top-button" text="Log Out" />
     </children>
 </AnchorPane>

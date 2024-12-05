@@ -5,12 +5,15 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="495.0" prefWidth="743.0" stylesheets="@userViewCSS.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.courseworkoop.UserViewController">
+<AnchorPane prefHeight="558.0" prefWidth="743.0" stylesheets="@userViewCSS.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.courseworkoop.UserViewController">
    <children>
       <Label fx:id="usernameLabel" layoutX="538.0" layoutY="21.0" prefHeight="19.0" prefWidth="185.0" styleClass="welcome-name-label" text="" />
-      <Label layoutX="146.0" layoutY="17.0" styleClass="title-label" text="Hi! Let's start reading some articles" />
-      <Label layoutX="88.0" layoutY="52.0" styleClass="sub-title-label" text="Please select the article category that you want to read" />
+      <Label layoutX="145.0" layoutY="59.0" styleClass="title-label" text="Hi! Let's start reading some articles" />
+      <Label layoutX="88.0" layoutY="92.0" styleClass="sub-title-label" text="Please select the article category that you want to read" />
       <Button fx:id="recommendArticlesButton" layoutX="538.0" layoutY="59.0" mnemonicParsing="false" onAction="#onRecommendArticleButtonClick" styleClass="recommend-button" text="Recommend Articles" />
-      <ListView fx:id="articlesListView" layoutX="26.0" layoutY="113.0" onMouseClicked="#onArticleClicked" styleClass="article-list-view" AnchorPane.bottomAnchor="37.0" AnchorPane.leftAnchor="26.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="113.0" />
+      <ListView fx:id="articlesListView" layoutX="20.0" layoutY="128.0" onMouseClicked="#onArticleClicked" styleClass="article-list-view" AnchorPane.bottomAnchor="22.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="128.0" />
+      <Button fx:id="signInButton" layoutX="173.0" layoutY="14.0" mnemonicParsing="false" onAction="#onSignInButtonClick" styleClass="top-button" text="Sign In" />
+      <Button fx:id="signUpButton" layoutX="253.0" layoutY="14.0" mnemonicParsing="false" onAction="#onSignUpButtonClick" styleClass="top-button" text="Sign Up" />
+      <Button fx:id="logOutButton" layoutX="334.0" layoutY="14.0" mnemonicParsing="false" onAction="#onLogOutButtonClick" styleClass="top-button" text="Log Out" />
    </children>
 </AnchorPane>

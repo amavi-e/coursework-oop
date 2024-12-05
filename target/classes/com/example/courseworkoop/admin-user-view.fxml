@@ -6,10 +6,10 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.courseworkoop.AdminUserViewController" stylesheets="@articleViewCSS.css">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@articleViewCSS.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.courseworkoop.AdminUserViewController">
     <children>
         <Label fx:id="usernameLabel" layoutX="538.0" layoutY="21.0" prefHeight="19.0" prefWidth="185.0" styleClass="welcome-name-label" text="" />
-        <Label fx:id="userLabel" layoutX="329.0" layoutY="32.0" styleClass="article-title-label" text="User : " />
+        <Label fx:id="userLabel" layoutX="306.0" layoutY="31.0" styleClass="article-title-label" text="User : " />
         <ScrollPane fx:id="scrollPane" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="61.0">
             <content>
                 <VBox fx:id="userDetailsBox" spacing="10.0" />
@@ -17,5 +17,8 @@
         </ScrollPane>
         <Button fx:id="backButton" layoutX="20.0" layoutY="18.0" mnemonicParsing="false" onAction="#onBackButtonClick" text="Back" />
         <Button fx:id="deleteUserButton" layoutX="321.0" layoutY="351.0" mnemonicParsing="false" onAction="#onDeleteUserButton" text="Delete User" AnchorPane.bottomAnchor="23.0" AnchorPane.rightAnchor="321.0" />
+        <Button fx:id="signInButton" layoutX="221.0" layoutY="8.0" mnemonicParsing="false" onAction="#onSignInButtonClick" styleClass="top-button" text="Sign In" />
+        <Button fx:id="signUpButton" layoutX="316.0" layoutY="8.0" mnemonicParsing="false" onAction="#onSignUpButtonClick" styleClass="top-button" text="Sign Up" />
+        <Button fx:id="logOutButton" layoutX="417.0" layoutY="8.0" mnemonicParsing="false" onAction="#onLogOutButtonClick" styleClass="top-button" text="Log Out" />
     </children>
 </AnchorPane>

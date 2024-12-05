@@ -4,11 +4,14 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="495.0" prefWidth="743.0" stylesheets="@userViewCSS.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.courseworkoop.AdminDashboardController">
+<AnchorPane prefHeight="165.0" prefWidth="743.0" stylesheets="@userViewCSS.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.courseworkoop.AdminDashboardController">
     <children>
         <Label fx:id="usernameLabel" layoutX="538.0" layoutY="21.0" prefHeight="19.0" prefWidth="185.0" styleClass="welcome-name-label" text="" />
-        <Label layoutX="199.0" layoutY="27.0" styleClass="title-label" text="Hi! You can manage articles and users now" />
-        <Button fx:id="manageArticlesButton" layoutX="263.0" layoutY="248.0" mnemonicParsing="false" onAction="#onManageArticlesButton" text="Manage Articles" />
-        <Button fx:id="manageUsersButton" layoutX="263.0" layoutY="248.0" mnemonicParsing="false" onAction="#onManageUsersButton" text="Manage Users" />
+        <Label layoutX="194.0" layoutY="47.0" styleClass="title-label" text="Hi! You can manage articles and users now" />
+        <Button fx:id="manageArticlesButton" layoutX="436.0" layoutY="94.0" mnemonicParsing="false" onAction="#onManageArticlesButton" text="Manage Articles" />
+        <Button fx:id="manageUsersButton" layoutX="198.0" layoutY="94.0" mnemonicParsing="false" onAction="#onManageUsersButton" text="Manage Users" />
+        <Button fx:id="signInButton" layoutX="219.0" layoutY="14.0" mnemonicParsing="false" onAction="#onSignInButtonClick" styleClass="top-button" text="Sign In" />
+        <Button fx:id="signUpButton" layoutX="315.0" layoutY="14.0" mnemonicParsing="false" onAction="#onSignUpButtonClick" styleClass="top-button" text="Sign Up" />
+        <Button fx:id="logOutButton" layoutX="420.0" layoutY="14.0" mnemonicParsing="false" onAction="#onLogOutButtonClick" styleClass="top-button" text="Log Out" />
     </children>
 </AnchorPane>

@@ -26,9 +26,6 @@
     -fx-padding: 8px 16px;
 }
 
-.button:hover {
-    -fx-background-color: #21618c;
-}
 
 /* Specific style for Recommend Articles button */
 .recommend-button {
@@ -78,6 +75,22 @@
     -fx-background-color: #e8f4fc; /* Light blue */
     -fx-cursor: hand; /* Pointer cursor */
 }
+
+#backButton {
+    -fx-background-color: transparent;
+    -fx-text-fill: #3498db;
+    -fx-underline: true;
+    -fx-cursor: hand;
+}
+
+.top-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #3498db;
+    -fx-underline: true;
+    -fx-cursor: hand;
+}
+
+
 
 
 

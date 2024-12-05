@@ -17,5 +17,8 @@
         </ScrollPane>
         <Button fx:id="backButton" layoutX="20.0" layoutY="18.0" mnemonicParsing="false" onAction="#onBackButtonClick" text="Back" />
         <Button fx:id="deleteUserButton" layoutX="321.0" layoutY="351.0" mnemonicParsing="false" onAction="#onDeleteUserButton" text="Delete User" AnchorPane.bottomAnchor="23.0" AnchorPane.rightAnchor="321.0" />
+        <Button fx:id="signInButton" layoutX="221.0" layoutY="8.0" mnemonicParsing="false" onAction="#onSignInButtonClick" styleClass="top-button" text="Sign In" />
+        <Button fx:id="signUpButton" layoutX="316.0" layoutY="8.0" mnemonicParsing="false" onAction="#onSignUpButtonClick" styleClass="top-button" text="Sign Up" />
+        <Button fx:id="logOutButton" layoutX="417.0" layoutY="8.0" mnemonicParsing="false" onAction="#onLogOutButtonClick" styleClass="top-button" text="Log Out" />
     </children>
 </AnchorPane>

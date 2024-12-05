@@ -20,6 +20,12 @@ public class AdminArticleViewController {
     @FXML
     public Label usernameLabel;
     @FXML
+    public Button signInButton;
+    @FXML
+    public Button signUpButton;
+    @FXML
+    public Button logOutButton;
+    @FXML
     private Label titleLabel;
     @FXML
     private Label descriptionLabel;
@@ -133,5 +139,26 @@ public class AdminArticleViewController {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void onSignInButtonClick(ActionEvent actionEvent) throws IOException {
+        Stage previousStage = (Stage)this.signInButton.getScene().getWindow();
+        Parent root = (Parent)FXMLLoader.load(this.getClass().getResource("admin-sign-in.fxml"));
+        previousStage.setScene(new Scene(root, 331, 400));
+        previousStage.show();
+    }
+
+    public void onSignUpButtonClick(ActionEvent actionEvent) throws IOException {
+        Stage previousStage = (Stage)this.signUpButton.getScene().getWindow();
+        Parent root = (Parent)FXMLLoader.load(this.getClass().getResource("admin-sign-up.fxml"));
+        previousStage.setScene(new Scene(root, 516, 400));
+        previousStage.show();
+    }
+
+    public void onLogOutButtonClick(ActionEvent actionEvent) throws IOException {
+        Stage previousStage = (Stage)this.logOutButton.getScene().getWindow();
+        Parent root = (Parent)FXMLLoader.load(this.getClass().getResource("portal-selection-page.fxml"));
+        previousStage.setScene(new Scene(root, 476, 167));
+        previousStage.show();
     }
 }
