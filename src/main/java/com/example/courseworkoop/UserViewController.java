@@ -32,28 +32,29 @@ public class UserViewController {
     @FXML
     public Button logOutButton;
 
-    private String username;
+    private User user;
 
-    // Set username and populate articles when set
-    public void setUsername(String username) {
-        this.username = username;
+    //set username and populate articles when set
+    public void setUser(User user) {
+        this.user = user;
         if (usernameLabel != null) {
-            usernameLabel.setText("Welcome, " + username + "!");
+            usernameLabel.setText("Welcome, " + user.getUsername() + "!");
         }
-        // Populate articles when the username is set
+        // Populate articles when the User object is set
         populateArticles();
     }
 
-    private void populateArticles() {
-        List<Article> articles = fetchArticles();
-        ObservableList<Article> articleObservableList = FXCollections.observableArrayList(articles);
-        articlesListView.setItems(articleObservableList);
 
-        // Set a custom cell factory to display title and description
+    public void populateArticles() {
+        List<Article> articles = fetchArticles(); //fetch articles using the fetchArticles method
+        ObservableList<Article> articleObservableList = FXCollections.observableArrayList(articles); //store the articles in an ObservableList
+        articlesListView.setItems(articleObservableList); //set items in the ObservableList to ListView
+
+        //set a custom cell factory to display title and description
         articlesListView.setCellFactory(param -> new ArticleListCell());
     }
 
-    private List<Article> fetchArticles() {
+    public List<Article> fetchArticles() {
         List<Article> articles = new ArrayList<>();
         String url = "jdbc:mysql://localhost:3306/personalizedArticles";
         String user = "root";
@@ -65,7 +66,7 @@ public class UserViewController {
              PreparedStatement statement = connection.prepareStatement(query);
              ResultSet resultSet = statement.executeQuery()) {
 
-            while (resultSet.next()) {
+            while (resultSet.next()) { //iterates through result set and creates Article objects to store each article's data
                 String title = resultSet.getString("title");
                 String description = resultSet.getString("description");
                 String articleUrl = resultSet.getString("url");
@@ -82,7 +83,7 @@ public class UserViewController {
 
     @FXML
     public void onArticleClicked(MouseEvent mouseEvent) {
-        if (mouseEvent.getClickCount() == 2) { // Double-click to view article content
+        if (mouseEvent.getClickCount() == 2) { //double-click to view article content
             Article selectedArticle = articlesListView.getSelectionModel().getSelectedItem();
             if (selectedArticle != null) {
                 showArticleContent(selectedArticle);
@@ -90,7 +91,7 @@ public class UserViewController {
         }
     }
 
-    private void showArticleContent(Article article) {
+    public void showArticleContent(Article article) {
         try {
             // Load the FXML file for the article view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("article-view.fxml"));
@@ -99,13 +100,11 @@ public class UserViewController {
             // Get the controller for the article view
             ArticleViewController articleViewController = loader.getController();
 
-            // Set the article details in the new scene (passing title, description, content)
-            articleViewController.setArticleDetails(article.getTitle(), article.getDescription(), article.getUrl(),this.username);
+            // Set the article details in the new scene (passing title, description, URL, and User object)
+            articleViewController.setArticleDetails(article.getTitle(), article.getDescription(), article.getUrl(), this.user);
 
-            // Get the current stage (previous window)
+            // Switch to the article view scene
             Stage previousStage = (Stage) articlesListView.getScene().getWindow();
-
-            // Set the new scene with article details
             previousStage.setScene(new Scene(root, 743, 558));
             previousStage.show();
 
@@ -117,36 +116,37 @@ public class UserViewController {
         }
     }
 
-    private void logUserHistory(Article article) {
+
+    public void logUserHistory(Article article) {
         String url = "jdbc:mysql://localhost:3306/personalizedArticles";
         String user = "root";
         String password = "";
 
-        String checkQuery = "SELECT viewCount FROM UserArticleHistory WHERE username = ? AND articleTitle = ?";
-        String insertQuery = "INSERT INTO UserArticleHistory (username, articleTitle, articleCategory, viewCount) VALUES (?, ?, ?, ?)";
-        String updateQuery = "UPDATE UserArticleHistory SET viewCount = viewCount + 1 WHERE username = ? AND articleTitle = ?";
+        String checkQuery = "SELECT viewCount FROM UserArticleHistory WHERE username = ? AND articleTitle = ?"; //check if the user has already viewed the article and retrieve the viewCount
+        String insertQuery = "INSERT INTO UserArticleHistory (username, articleTitle, articleCategory, viewCount) VALUES (?, ?, ?, ?)"; //insert a new record when the user views the article for the first time
+        String updateQuery = "UPDATE UserArticleHistory SET viewCount = viewCount + 1 WHERE username = ? AND articleTitle = ?"; //increase view count by one
 
         try (Connection connection = DriverManager.getConnection(url, user, password);
              PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
 
-            checkStatement.setString(1, username);
-            checkStatement.setString(2, article.getTitle());
+            checkStatement.setString(1, this.user.getUsername()); //replace placeholder with current username
+            checkStatement.setString(2, article.getTitle()); //replace with the title of the  article the user is viewing
 
-            try (ResultSet resultSet = checkStatement.executeQuery()) {
+            try (ResultSet resultSet = checkStatement.executeQuery()) { //execute check query
                 if (resultSet.next()) {
-                    int currentViewCount = resultSet.getInt("viewCount");
+                    int currentViewCount = resultSet.getInt("viewCount"); //get the current view count
                     try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
-                        updateStatement.setString(1, username);
-                        updateStatement.setString(2, article.getTitle());
-                        updateStatement.executeUpdate();
+                        updateStatement.setString(1, this.user.getUsername()); //identify the user
+                        updateStatement.setString(2, article.getTitle()); //identify the article
+                        updateStatement.executeUpdate(); //update view count
                         System.out.println("User history updated successfully. View count: " + (currentViewCount + 1));
                     }
-                } else {
+                } else { //insert new record if no history exists
                     try (PreparedStatement insertStatement = connection.prepareStatement(insertQuery)) {
-                        insertStatement.setString(1, username);
+                        insertStatement.setString(1, this.user.getUsername());
                         insertStatement.setString(2, article.getTitle());
                         insertStatement.setString(3, article.getCategory());
-                        insertStatement.setInt(4, 1); // Start viewCount from 1
+                        insertStatement.setInt(4, 1); //start viewCount from 1
                         insertStatement.executeUpdate();
                         System.out.println("User history logged successfully. View count: 1");
                     }
@@ -164,9 +164,9 @@ public class UserViewController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("recommendation-view.fxml"));
             Parent root = loader.load();
 
-            RecommendationController controller = loader.getController();
-            controller.setUsername(this.username);
-            controller.populateRecommendations();
+            RecommendationController recommendationController = loader.getController();
+            recommendationController.setUser(this.user); //pass the username to recommendationController
+            recommendationController.populateRecommendations();
 
             Stage currentStage = (Stage) recommendArticlesButton.getScene().getWindow();
             currentStage.setScene(new Scene(root, 743, 558));
@@ -175,6 +175,7 @@ public class UserViewController {
         }
     }
 
+    //go back to sign in page
     public void onSignInButtonClick(ActionEvent actionEvent) throws IOException {
         Stage previousStage = (Stage)this.signInButton.getScene().getWindow();
         Parent root = (Parent)FXMLLoader.load(this.getClass().getResource("sign-in-page.fxml"));
@@ -182,6 +183,7 @@ public class UserViewController {
         previousStage.show();
     }
 
+    //go back to sign up page
     public void onSignUpButtonClick(ActionEvent actionEvent) throws IOException {
         Stage previousStage = (Stage)this.signUpButton.getScene().getWindow();
         Parent root = (Parent)FXMLLoader.load(this.getClass().getResource("sign-up-page.fxml"));
@@ -189,6 +191,7 @@ public class UserViewController {
         previousStage.show();
     }
 
+    //log out of the account
     public void onLogOutButtonClick(ActionEvent actionEvent) throws IOException {
         Stage previousStage = (Stage)this.logOutButton.getScene().getWindow();
         Parent root = (Parent)FXMLLoader.load(this.getClass().getResource("portal-selection-page.fxml"));

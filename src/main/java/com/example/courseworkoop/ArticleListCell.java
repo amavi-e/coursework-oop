@@ -5,7 +5,7 @@ import javafx.scene.text.Text;
 
 public class ArticleListCell extends ListCell<Article> {
     @Override
-    protected void updateItem(Article article, boolean empty) {
+    public void updateItem(Article article, boolean empty) {
         super.updateItem(article, empty);
 
         if (empty || article == null) {

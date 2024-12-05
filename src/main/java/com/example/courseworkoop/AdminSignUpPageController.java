@@ -76,7 +76,7 @@ public class AdminSignUpPageController {
         previousStage.show();
     }
 
-    private void showAlert(String title, String message) {
+    public void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
@@ -84,7 +84,7 @@ public class AdminSignUpPageController {
         alert.showAndWait();
     }
 
-    private boolean isValidUsername(String username) {
+    public boolean isValidUsername(String username) {
         return VALID_USERNAME_PATTERN.matcher(username).matches(); //can only have simple letters and numbers
     }
 }

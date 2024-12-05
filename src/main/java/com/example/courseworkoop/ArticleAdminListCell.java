@@ -28,7 +28,7 @@ public class ArticleAdminListCell extends ListCell<Article> {
     }
 
     @Override
-    protected void updateItem(Article article, boolean empty) {
+    public void updateItem(Article article, boolean empty) {
         super.updateItem(article, empty);
 
         if (empty || article == null || "No Articles Available".equals(article.getTitle())) {

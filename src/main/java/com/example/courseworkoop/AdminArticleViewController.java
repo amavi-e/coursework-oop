@@ -39,7 +39,6 @@ public class AdminArticleViewController {
     private String title;
     private String description;
     private String url;
-
     private String username;
 
     // Set username and populate articles when set
@@ -86,7 +85,7 @@ public class AdminArticleViewController {
     }
 
     // Method to delete the article from the database
-    private boolean deleteArticleFromDatabase() {
+    public boolean deleteArticleFromDatabase() {
         String url = "jdbc:mysql://localhost:3306/personalizedArticles";
         String user = "root";
         String password = "";
@@ -114,7 +113,7 @@ public class AdminArticleViewController {
     }
 
     // Method to redirect to the manage articles screen
-    private void redirectToManageArticlesScreen() throws IOException {
+    public void redirectToManageArticlesScreen() throws IOException {
         Stage previousStage = (Stage) deleteButton.getScene().getWindow();
 
         // Load the admin articles management screen

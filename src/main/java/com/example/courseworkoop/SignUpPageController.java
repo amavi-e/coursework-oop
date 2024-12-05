@@ -23,19 +23,21 @@ public class SignUpPageController {
     @FXML
     public TextField passwordFieldSignUp;
 
-    private static final Pattern VALID_USERNAME_PATTERN = Pattern.compile("^[a-z0-9]+$");
+    /* ^ is the start of the string, a-z0-9_ is a to z or 0 to 9 or underscore,+ ensures that one or more characters
+    from the specified set is present, $ is the end of the string */
+    private static final Pattern VALID_USERNAME_PATTERN = Pattern.compile("^[a-z0-9_]+$");
 
     public void onSignUpFinalButtonClick(ActionEvent actionEvent) throws IOException {
-        String username = userNameFieldSignUp.getText();
-        String password = passwordFieldSignUp.getText();
+        String username = userNameFieldSignUp.getText(); //get username field
+        String password = passwordFieldSignUp.getText(); //get password field
 
-        // Check if fields are empty
+        //check if fields are empty
         if (username.isEmpty() || password.isEmpty()) {
             showAlert("Error", "Username and password cannot be empty.");
             return;
         }
 
-        // Validate username format
+        //validate username format
         if (!isValidUsername(username)) {
             showAlert("Error", "Username must contain only lowercase letters and numbers, without spaces or special characters.");
             return;
@@ -43,32 +45,33 @@ public class SignUpPageController {
 
         DatabaseManager dbManager = new DatabaseManager();
 
-        // Check if username already exists
+        //check if username already exists
         if (dbManager.usernameExists(username)) {
             showAlert("Error", "Username already exists. Please choose a different username.");
             return;
         }
 
-        // Register the new user
-        dbManager.registerUser(username, password);
+        //create a new User object and register it to the system
+        User newUser = new User(username, password);
+        dbManager.registerUser(newUser.getUsername(), newUser.getPassword());
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("user-view.fxml"));
         Parent root = loader.load();
 
-        // Pass the username to UserViewController
+        //pass the new User object to UserViewController
         UserViewController userController = loader.getController();
-        userController.setUsername(username);
+        userController.setUser(newUser);
 
         Stage stage = (Stage) signUpFinalButton.getScene().getWindow();
         stage.setScene(new Scene(root, 743, 558));
         stage.show();
 
-
-        // Clear fields after successful registration
+        //clear fields after successful registration
         userNameFieldSignUp.clear();
         passwordFieldSignUp.clear();
     }
 
+    //go to sign in page
     public void onSignInCreateAccountClick(ActionEvent actionEvent) throws IOException {
         Stage previousStage = (Stage) this.signInCreateAccountButton.getScene().getWindow();
         Parent root = FXMLLoader.load(getClass().getResource("sign-in-page.fxml"));
@@ -76,7 +79,7 @@ public class SignUpPageController {
         previousStage.show();
     }
 
-    private void showAlert(String title, String message) {
+    public void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
@@ -84,7 +87,7 @@ public class SignUpPageController {
         alert.showAndWait();
     }
 
-    private boolean isValidUsername(String username) {
-        return VALID_USERNAME_PATTERN.matcher(username).matches(); //can only have simple letters and numbers
+    public boolean isValidUsername(String username) {
+        return VALID_USERNAME_PATTERN.matcher(username).matches(); //can only have simple letters, numbers and underscores
     }
 }

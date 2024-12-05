@@ -24,17 +24,17 @@ public class AdminResetPasswordController {
     public Button resetPasswordButton;
 
     public void onResetPasswordButtonClick(ActionEvent actionEvent) throws IOException {
-        String username = usernameResetPasswordField.getText();
-        String newPassword = enterNewPasswordField.getText();
-        String confirmPassword = confirmNewPasswordField.getText();
+        String username = usernameResetPasswordField.getText(); //get username from field
+        String newPassword = enterNewPasswordField.getText(); //get new password from field
+        String confirmPassword = confirmNewPasswordField.getText(); //get confirm password from field
 
-        // Check if passwords match
+        //check if passwords match
         if (!newPassword.equals(confirmPassword)) {
             showAlert("Error", "Passwords do not match.");
             return;
         }
 
-        // Validate username and update password for admin
+        //validate username and update password for admin
         DatabaseManager dbManager = new DatabaseManager();
         if (dbManager.adminUsernameExists(username)) {
             boolean isUpdated = dbManager.updateAdminPassword(username, newPassword);
@@ -43,7 +43,7 @@ public class AdminResetPasswordController {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("admin-dashboard.fxml"));
                 Parent root = loader.load();
 
-                // Pass the username to AdminDashboardController if needed
+                //pass the username to AdminDashboardController
                 AdminDashboardController adminController = loader.getController();
                 adminController.setUsername(username);
 
@@ -58,7 +58,7 @@ public class AdminResetPasswordController {
         }
     }
 
-    // Helper method to show alerts
+    //method to show alerts
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);

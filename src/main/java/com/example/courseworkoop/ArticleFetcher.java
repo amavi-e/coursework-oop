@@ -116,7 +116,7 @@ public class ArticleFetcher {
         }
     }
 
-    private String categorizeArticleUsingNLP(String text) {
+    public String categorizeArticleUsingNLP(String text) {
         Map<String, Double> similarityScores = new HashMap<>();
         String cleanedText = preprocessText(text);
 
@@ -144,7 +144,7 @@ public class ArticleFetcher {
                 .orElse("General");
     }
 
-    private String preprocessText(String text) {
+    public String preprocessText(String text) {
         text = text.toLowerCase().replaceAll("[^a-z0-9\\s]", " ");
         String[] words = text.split("\\s+");
         StringBuilder processedText = new StringBuilder();
@@ -156,7 +156,7 @@ public class ArticleFetcher {
         return processedText.toString().trim();
     }
 
-    private String stem(String word) {
+    public String stem(String word) {
         if (word.length() > 3) {
             if (word.endsWith("ing") || word.endsWith("ed")) {
                 word = word.substring(0, word.length() - 3);
@@ -167,12 +167,12 @@ public class ArticleFetcher {
         return word;
     }
 
-    private String retryCategorization(String text) {
+    public String retryCategorization(String text) {
         System.out.println("Retrying categorization with adjusted thresholds...");
         return categorizeArticleUsingNLP(text);
     }
 
-    private Map<String, Integer> calculateWordFrequency(String text) {
+    public Map<String, Integer> calculateWordFrequency(String text) {
         Map<String, Integer> wordCount = new HashMap<>();
         String[] words = text.split("\\W+");
         for (String word : words) {
@@ -182,7 +182,7 @@ public class ArticleFetcher {
         return wordCount;
     }
 
-    private double calculateCosineSimilarity(Map<String, Integer> vec1, Map<String, Integer> vec2) {
+    public double calculateCosineSimilarity(Map<String, Integer> vec1, Map<String, Integer> vec2) {
         double dotProduct = 0.0;
         double normA = 0.0;
         double normB = 0.0;
@@ -199,7 +199,7 @@ public class ArticleFetcher {
         return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
     }
 
-    private void storeArticleInDatabase(String title, String description, String content, String url, String category) {
+    public void storeArticleInDatabase(String title, String description, String content, String url, String category) {
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
             String sql = "INSERT INTO Articles (title, description, content, url, category) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {

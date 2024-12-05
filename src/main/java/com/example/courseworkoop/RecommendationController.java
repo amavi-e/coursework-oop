@@ -36,28 +36,27 @@ public class RecommendationController {
     @FXML
     public Button logOutButton;
 
-    private String username;
+    private User user; // Replaced username with a User instance
 
-    public void setUsername(String username) {
-        this.username = username;
-        if (usernameLabel != null) {
-            usernameLabel.setText("Welcome, " + username + "!");
+    public void setUser(User user) {
+        this.user = user; // Ensure the user field is properly initialized
+        if (usernameLabel != null && user != null) {
+            usernameLabel.setText("Welcome, " + user.getUsername() + "!");
         }
     }
 
-    public void populateRecommendations() {
-        // Use concurrency to fetch recommendations
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        executorService.submit(() -> {
-            List<Article> recommendedArticles = fetchRecommendedArticles();
-            ObservableList<Article> observableList = FXCollections.observableArrayList(recommendedArticles);
-            recommendationsListView.setItems(observableList);
 
-            // Set a custom cell factory to display articles
+    public void populateRecommendations() {
+        ExecutorService executorService = Executors.newSingleThreadExecutor(); //tasks are executed sequentially
+        executorService.submit(() -> {
+            List<Article> recommendedArticles = fetchRecommendedArticles(); //method to fetch articles
+            ObservableList<Article> observableList = FXCollections.observableArrayList(recommendedArticles); //articles stored in an observable list
+            recommendationsListView.setItems(observableList); //observable list items set in the list view.
+
+            //custom cell factory to display articles
             recommendationsListView.setCellFactory(param -> new ArticleListCell());
 
-            // Add event listener for item click
-            recommendationsListView.setOnMouseClicked(event -> {
+            recommendationsListView.setOnMouseClicked(event -> { //article clicked
                 Article selectedArticle = recommendationsListView.getSelectionModel().getSelectedItem();
                 if (selectedArticle != null) {
                     openArticleView(selectedArticle);
@@ -67,46 +66,46 @@ public class RecommendationController {
         executorService.shutdown();
     }
 
-    private List<Article> fetchRecommendedArticles() {
+    public List<Article> fetchRecommendedArticles() {
         List<Article> recommendedArticles = new ArrayList<>();
         String url = "jdbc:mysql://localhost:3306/personalizedArticles";
         String user = "root";
         String password = "";
 
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
-            // Step 1: Fetch user preferences
+
             List<String> viewedCategories = new ArrayList<>();
             List<String> dislikedCategories = new ArrayList<>();
             List<Object> parameters = new ArrayList<>();
 
             String viewQuery = "SELECT articleCategory, COUNT(*) AS viewCount " +
                     "FROM UserArticleHistory " +
-                    "WHERE username = ? AND likeDislikeStatus != 0 " +  // Exclude disliked categories
+                    "WHERE username = ? AND likeDislikeStatus != 0 " +
                     "GROUP BY articleCategory " +
-                    "ORDER BY viewCount DESC";
+                    "ORDER BY viewCount DESC"; //categories the user has viewed (excluding dislikes)
             String dislikeQuery = "SELECT DISTINCT articleCategory FROM UserArticleHistory " +
-                    "WHERE username = ? AND likeDislikeStatus = 0";
+                    "WHERE username = ? AND likeDislikeStatus = 0"; //categories the user dislikes.
 
-            // Fetch categories viewed by the user
+            //categories viewed by the user
             try (PreparedStatement viewStmt = connection.prepareStatement(viewQuery)) {
-                viewStmt.setString(1, this.username);
+                viewStmt.setString(1, this.user.getUsername());
                 ResultSet rs = viewStmt.executeQuery();
                 while (rs.next()) {
                     viewedCategories.add(rs.getString("articleCategory"));
                 }
             }
 
-            // Fetch categories disliked by the user
+            //categories disliked by the user
             try (PreparedStatement dislikeStmt = connection.prepareStatement(dislikeQuery)) {
-                dislikeStmt.setString(1, this.username);
+                dislikeStmt.setString(1, this.user.getUsername());
                 ResultSet rs = dislikeStmt.executeQuery();
                 while (rs.next()) {
                     dislikedCategories.add(rs.getString("articleCategory"));
                 }
             }
 
-            // Step 2: Build SQL query for recommendations
-            StringBuilder queryBuilder = new StringBuilder("SELECT title, description, content, category, url FROM Articles WHERE ");
+            //build SQL query for recommendations
+            StringBuilder queryBuilder = new StringBuilder("SELECT title, description, content, url, category FROM Articles WHERE ");
             List<String> conditions = new ArrayList<>();
 
             if (!viewedCategories.isEmpty()) {
@@ -126,7 +125,7 @@ public class RecommendationController {
                 return recommendedArticles;
             }
 
-            queryBuilder.append(String.join(" AND ", conditions)).append(" ORDER BY RAND() LIMIT 10");
+            queryBuilder.append(String.join(" AND ", conditions)).append(" ORDER BY RAND()");
 
             // Step 3: Execute query
             try (PreparedStatement stmt = connection.prepareStatement(queryBuilder.toString())) {
@@ -139,8 +138,8 @@ public class RecommendationController {
                     recommendedArticles.add(new Article(
                             rs.getString("title"),
                             rs.getString("description"),
-                            rs.getString("category"),
-                            rs.getString("url")
+                            rs.getString("url"),
+                            rs.getString("category")
                     ));
                 }
             }
@@ -151,7 +150,7 @@ public class RecommendationController {
         return recommendedArticles;
     }
 
-    private void openArticleView(Article article) {
+    public void openArticleView(Article article) {
         try {
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("article-view.fxml"));
@@ -159,7 +158,7 @@ public class RecommendationController {
 
             // Get controller and pass article details and username
             ArticleViewController articleViewController = loader.getController();
-            articleViewController.setArticleDetails(article.getTitle(), article.getDescription(), article.getUrl(), this.username); // Pass URL here
+            articleViewController.setArticleDetails(article.getTitle(), article.getDescription(), article.getUrl(), this.user); // Pass URL here
 
             // Set the scene for the article view
             Stage stage = (Stage) recommendationsListView.getScene().getWindow();
@@ -178,7 +177,7 @@ public class RecommendationController {
 
         // Get the controller for UserViewController and pass the username
         UserViewController userViewController = loader.getController();
-        userViewController.setUsername(this.username); // Ensure the username is passed to the UserViewController
+        userViewController.setUser(this.user); // Ensure the username is passed to the UserViewController
 
         // Set the scene and show the previous stage
         previousStage.setScene(new Scene(root, 743, 495));

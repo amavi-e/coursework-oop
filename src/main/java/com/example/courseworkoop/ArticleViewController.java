@@ -36,47 +36,46 @@ public class ArticleViewController {
     @FXML
     private Label descriptionLabel;
     @FXML
-    private Label urlLabel; // Updated label for URL
+    private Label urlLabel;
     @FXML
     protected Label usernameLabel;
 
     private String url;
-    private String username; // Store username
-    private String articleTitle; // Store article title
-    private String currentLikeDislikeStatus = "none"; // To track like/dislike status
+    private User user; // Use the User class
+    private String articleTitle;
+    private String currentLikeDislikeStatus = "none";
 
-    // Method to set article details along with username
-    public void setArticleDetails(String title, String description, String url, String username) { // Updated parameter
+    public void setArticleDetails(String title, String description, String url, User user) {
         titleLabel.setText(title);
         descriptionLabel.setText("Description: " + description);
-        urlLabel.setText("URL: " + url); // Display URL instead of content
-        this.username = username; // Store the username
+        urlLabel.setText("URL: " + url);
+        this.user = user; // Store the User object
         this.articleTitle = title;
         this.url = url;
 
-        setUsername(username); // Ensure username is displayed in the view
-        retrieveLikeDislikeStatus();// Fetch current like/dislike status
+        setUser(user); // Use the User object to set the username
+        retrieveLikeDislikeStatus();
 
         urlLabel.setOnMouseClicked(this::openArticleUrl);
     }
 
-    public void setUsername(String username) {
+    public void setUser(User user) {
+        this.user = user; // Store the User object
         if (usernameLabel != null) {
-            usernameLabel.setText("Welcome, " + username + "!");
+            usernameLabel.setText("Welcome, " + user.getUsername() + "!");
         }
     }
 
-    // Rest of the code remains unchanged...
-    private void retrieveLikeDislikeStatus() {
+    public void retrieveLikeDislikeStatus() {
         String url = "jdbc:mysql://localhost:3306/personalizedArticles";
-        String user = "root";
+        String dbUser = "root";
         String password = "";
         String query = "SELECT likeDislikeStatus FROM UserArticleHistory WHERE username = ? AND articleTitle = ?";
 
-        try (Connection connection = DriverManager.getConnection(url, user, password);
+        try (Connection connection = DriverManager.getConnection(url, dbUser, password);
              PreparedStatement statement = connection.prepareStatement(query)) {
 
-            statement.setString(1, username);
+            statement.setString(1, user.getUsername()); // Use the User object
             statement.setString(2, articleTitle);
 
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -90,66 +89,55 @@ public class ArticleViewController {
         }
     }
 
-    private void updateButtonStates() {
+    public void updateButtonStates() {
         if ("liked".equals(currentLikeDislikeStatus)) {
-            likeButton.setStyle("-fx-background-color: #388E3C;"); // Highlight like button
-            dislikeButton.setStyle(""); // Reset dislike button
+            likeButton.setStyle("-fx-background-color: #388E3C;");
+            dislikeButton.setStyle("");
         } else if ("disliked".equals(currentLikeDislikeStatus)) {
-            likeButton.setStyle(""); // Reset like button
-            dislikeButton.setStyle("-fx-background-color: #D32F2F;"); // Highlight dislike button
+            likeButton.setStyle("");
+            dislikeButton.setStyle("-fx-background-color: #D32F2F;");
         } else {
-            likeButton.setStyle("");  // Reset like button
-            dislikeButton.setStyle("");  // Reset dislike button
+            likeButton.setStyle("");
+            dislikeButton.setStyle("");
         }
     }
 
     public void onBackButtonClick(ActionEvent actionEvent) throws IOException {
         Stage previousStage = (Stage) this.backButton.getScene().getWindow();
 
-        // Load the user-view.fxml
         FXMLLoader loader = new FXMLLoader(getClass().getResource("user-view.fxml"));
         Parent root = loader.load();
 
-        // Get the controller for UserViewController and pass the username
         UserViewController userViewController = loader.getController();
-        userViewController.setUsername(this.username); // Ensure the username is passed to the UserViewController
+        userViewController.setUser(this.user); // Pass the User object
 
-        // Set the scene and show the previous stage
         previousStage.setScene(new Scene(root, 743, 558));
         previousStage.show();
     }
 
     public void onLikeButtonClick(ActionEvent actionEvent) {
-        if ("liked".equals(currentLikeDislikeStatus)) {
-            currentLikeDislikeStatus = "none"; // Un-like the article
-        } else {
-            currentLikeDislikeStatus = "liked"; // Like the article
-        }
+        currentLikeDislikeStatus = "liked".equals(currentLikeDislikeStatus) ? "none" : "liked";
 
-        logUserHistory(username, articleTitle, currentLikeDislikeStatus);
+        logUserHistory(user.getUsername(), articleTitle, currentLikeDislikeStatus);
         updateButtonStates();
     }
 
     public void onDislikeButtonClick(ActionEvent actionEvent) {
-        if ("disliked".equals(currentLikeDislikeStatus)) {
-            currentLikeDislikeStatus = "none"; // Un-dislike the article
-        } else {
-            currentLikeDislikeStatus = "disliked"; // Dislike the article
-        }
+        currentLikeDislikeStatus = "disliked".equals(currentLikeDislikeStatus) ? "none" : "disliked";
 
-        logUserHistory(username, articleTitle, currentLikeDislikeStatus);
+        logUserHistory(user.getUsername(), articleTitle, currentLikeDislikeStatus);
         updateButtonStates();
     }
 
     public void logUserHistory(String username, String articleTitle, String likeDislikeStatus) {
         String url = "jdbc:mysql://localhost:3306/personalizedArticles";
-        String user = "root";
+        String dbUser = "root";
         String password = "";
         String query;
 
         String checkQuery = "SELECT * FROM UserArticleHistory WHERE username = ? AND articleTitle = ?";
 
-        try (Connection connection = DriverManager.getConnection(url, user, password);
+        try (Connection connection = DriverManager.getConnection(url, dbUser, password);
              PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
 
             checkStatement.setString(1, username);
@@ -170,14 +158,13 @@ public class ArticleViewController {
                     try (PreparedStatement insertStatement = connection.prepareStatement(query)) {
                         insertStatement.setString(1, username);
                         insertStatement.setString(2, articleTitle);
-                        insertStatement.setString(3, "Category"); // Replace with actual article category
+                        insertStatement.setString(3, "Category");
                         insertStatement.setString(4, likeDislikeStatus);
                         insertStatement.executeUpdate();
                         System.out.println("User history logged successfully!");
                     }
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -185,13 +172,13 @@ public class ArticleViewController {
 
     public void onSkipButtonClick(ActionEvent actionEvent) {
         String url = "jdbc:mysql://localhost:3306/personalizedArticles";
-        String user = "root";
+        String dbUser = "root";
         String password = "";
 
-        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+        try (Connection connection = DriverManager.getConnection(url, dbUser, password)) {
             String checkQuery = "SELECT viewCount FROM UserArticleHistory WHERE username = ? AND articleTitle = ?";
             try (PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
-                checkStatement.setString(1, username);
+                checkStatement.setString(1, user.getUsername());
                 checkStatement.setString(2, articleTitle);
 
                 try (ResultSet resultSet = checkStatement.executeQuery()) {
@@ -201,15 +188,15 @@ public class ArticleViewController {
                         if (viewCount > 1) {
                             String updateQuery = "UPDATE UserArticleHistory SET viewCount = viewCount - 1 WHERE username = ? AND articleTitle = ?";
                             try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
-                                updateStatement.setString(1, username);
+                                updateStatement.setString(1, user.getUsername());
                                 updateStatement.setString(2, articleTitle);
                                 updateStatement.executeUpdate();
-                                System.out.println("ViewCount reduced by 1 for the article.");
+                                System.out.println("View count reduced by 1 for the article.");
                             }
                         } else {
                             String deleteQuery = "DELETE FROM UserArticleHistory WHERE username = ? AND articleTitle = ?";
                             try (PreparedStatement deleteStatement = connection.prepareStatement(deleteQuery)) {
-                                deleteStatement.setString(1, username);
+                                deleteStatement.setString(1, user.getUsername());
                                 deleteStatement.setString(2, articleTitle);
                                 deleteStatement.executeUpdate();
                                 System.out.println("Article removed from user history.");
@@ -219,12 +206,13 @@ public class ArticleViewController {
                 }
             }
 
+            // Navigate back to the user view
             Stage stage = (Stage) skipButton.getScene().getWindow();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("user-view.fxml"));
             Parent root = loader.load();
 
             UserViewController userViewController = loader.getController();
-            userViewController.setUsername(this.username);
+            userViewController.setUser(this.user); // Pass the User object
 
             stage.setScene(new Scene(root, 743, 495));
             stage.show();
@@ -234,11 +222,11 @@ public class ArticleViewController {
         }
     }
 
-    // Method to open the article URL in a browser
-    private void openArticleUrl(MouseEvent event) {
+
+
+    public void openArticleUrl(MouseEvent event) {
         if (url != null && !url.isEmpty()) {
             try {
-                // Open the URL in the default browser
                 java.awt.Desktop.getDesktop().browse(java.net.URI.create(url));
             } catch (IOException e) {
                 e.printStackTrace();
@@ -247,22 +235,22 @@ public class ArticleViewController {
     }
 
     public void onSignInButtonClick(ActionEvent actionEvent) throws IOException {
-        Stage previousStage = (Stage)this.signInButton.getScene().getWindow();
-        Parent root = (Parent)FXMLLoader.load(this.getClass().getResource("sign-in-page.fxml"));
+        Stage previousStage = (Stage) this.signInButton.getScene().getWindow();
+        Parent root = FXMLLoader.load(this.getClass().getResource("sign-in-page.fxml"));
         previousStage.setScene(new Scene(root, 331, 400));
         previousStage.show();
     }
 
     public void onSignUpButtonClick(ActionEvent actionEvent) throws IOException {
-        Stage previousStage = (Stage)this.signUpButton.getScene().getWindow();
-        Parent root = (Parent)FXMLLoader.load(this.getClass().getResource("sign-up-page.fxml"));
+        Stage previousStage = (Stage) this.signUpButton.getScene().getWindow();
+        Parent root = FXMLLoader.load(this.getClass().getResource("sign-up-page.fxml"));
         previousStage.setScene(new Scene(root, 516, 400));
         previousStage.show();
     }
 
     public void onLogOutButtonClick(ActionEvent actionEvent) throws IOException {
-        Stage previousStage = (Stage)this.logOutButton.getScene().getWindow();
-        Parent root = (Parent)FXMLLoader.load(this.getClass().getResource("portal-selection-page.fxml"));
+        Stage previousStage = (Stage) this.logOutButton.getScene().getWindow();
+        Parent root = FXMLLoader.load(this.getClass().getResource("portal-selection-page.fxml"));
         previousStage.setScene(new Scene(root, 476, 167));
         previousStage.show();
     }

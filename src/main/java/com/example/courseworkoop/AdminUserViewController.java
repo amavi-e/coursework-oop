@@ -54,7 +54,7 @@ public class AdminUserViewController {
         populateUserHistory();
     }
 
-    private void populateUserHistory() {
+    public void populateUserHistory() {
         String url = "jdbc:mysql://localhost:3306/personalizedArticles";
         String dbUser = "root";
         String dbPassword = "";

@@ -25,40 +25,41 @@ public class SignInPageController {
     @FXML
     public Button forgotPasswordButton;
 
-    // Inside SignInPageController.java
     public void OnSignInButtonFinalClick(ActionEvent actionEvent) throws IOException {
-        String username = usernameSignInPage.getText();
-        String password = passwordSignInPage.getText();
+        String username = usernameSignInPage.getText(); //get username field
+        String password = passwordSignInPage.getText(); //get password field
 
-        // Check if fields are empty
+        //check if fields are empty
         if (username.isEmpty() || password.isEmpty()) {
             showAlert("Error", "Username and password cannot be empty.");
             return;
         }
 
-        // Validate the username and password with the database
-        DatabaseManager dbManager = new DatabaseManager();
-        boolean validUser = dbManager.validateUser(username, password);
+        //create a User object for validation
+        User user = new User(username, password);
 
-        if (validUser) {
+        //validate the username and password with the database
+        DatabaseManager dbManager = new DatabaseManager();
+        boolean validUser = dbManager.validateUser(user.getUsername(), user.getPassword());
+
+        if (validUser) { //if user is valid, open home page
             FXMLLoader loader = new FXMLLoader(getClass().getResource("user-view.fxml"));
             Parent root = loader.load();
 
-            // Pass the username to UserViewController
+            //pass the User object to UserViewController
             UserViewController userController = loader.getController();
-            userController.setUsername(username);
+            userController.setUser(user);
 
             Stage stage = (Stage) signInButtonFinal.getScene().getWindow();
             stage.setScene(new Scene(root, 743, 558));
             stage.show();
-        }
-        else {
+        } else {
             showAlert("Error", "Invalid username or password.");
         }
     }
 
-    // Helper method to show alerts
-    private void showAlert(String title, String message) {
+    //showing alerts method
+    public void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
@@ -66,17 +67,18 @@ public class SignInPageController {
         alert.showAndWait();
     }
 
-
+    //go to sign up page
     public void onSignUpLoginPageButtonClick(ActionEvent actionEvent) throws IOException {
-        Stage previousStage = (Stage)this.signUpLoginPageButton.getScene().getWindow();
-        Parent root = (Parent) FXMLLoader.load(this.getClass().getResource("sign-up-page.fxml"));
+        Stage previousStage = (Stage) this.signUpLoginPageButton.getScene().getWindow();
+        Parent root = FXMLLoader.load(this.getClass().getResource("sign-up-page.fxml"));
         previousStage.setScene(new Scene(root, 516, 400));
         previousStage.show();
     }
 
+    //open ResetPasswordController if clicked on forgot password
     public void onForgotPasswordButtonClick(ActionEvent actionEvent) throws IOException {
-        Stage previousStage = (Stage)this.forgotPasswordButton.getScene().getWindow();
-        Parent root = (Parent) FXMLLoader.load(this.getClass().getResource("reset-password.fxml"));
+        Stage previousStage = (Stage) this.forgotPasswordButton.getScene().getWindow();
+        Parent root = FXMLLoader.load(this.getClass().getResource("reset-password.fxml"));
         previousStage.setScene(new Scene(root, 482, 400));
         previousStage.show();
     }

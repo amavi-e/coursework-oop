@@ -51,7 +51,7 @@ public class AdminManageUsersController {
         }
     }
 
-    private void populateUsers() {
+    public void populateUsers() {
         ObservableList<String> usersList = FXCollections.observableArrayList();
         String url = "jdbc:mysql://localhost:3306/personalizedArticles";
         String user = "root";
@@ -83,7 +83,7 @@ public class AdminManageUsersController {
         });
     }
 
-    private void redirectToUserView(String selectedUser) {
+    public void redirectToUserView(String selectedUser) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("admin-user-view.fxml"));
             Parent root = loader.load();

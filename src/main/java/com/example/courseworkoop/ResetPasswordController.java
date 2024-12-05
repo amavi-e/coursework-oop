@@ -24,28 +24,31 @@ public class ResetPasswordController {
     public Button resetPasswordButton;
 
     public void onResetPasswordButtonClick(ActionEvent actionEvent) throws IOException {
-        String username = usernameResetPasswordField.getText();
-        String newPassword = enterNewPasswordField.getText();
-        String confirmPassword = confirmNewPasswordField.getText();
+        String username = usernameResetPasswordField.getText(); //get username from field
+        String newPassword = enterNewPasswordField.getText(); //get new password from field
+        String confirmPassword = confirmNewPasswordField.getText(); //get confirm password from field
 
-        // Check if passwords match
+        //check if passwords match
         if (!newPassword.equals(confirmPassword)) {
             showAlert("Error", "Passwords do not match.");
             return;
         }
 
-        // Validate username and update password
+        //create a User object with the provided username and new password
+        User user = new User(username, newPassword);
+
+        //validate username and update password
         DatabaseManager dbManager = new DatabaseManager();
-        if (dbManager.usernameExists(username)) {
-            boolean isUpdated = dbManager.updatePassword(username, newPassword);
+        if (dbManager.usernameExists(user.getUsername())) {
+            boolean isUpdated = dbManager.updatePassword(user.getUsername(), user.getPassword());
             if (isUpdated) {
                 showAlert("Success", "Password updated successfully.");
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("user-view.fxml"));
                 Parent root = loader.load();
 
-                // Pass the username to UserViewController
+                //pass the User object to UserViewController
                 UserViewController userController = loader.getController();
-                userController.setUsername(username);
+                userController.setUser(user);
 
                 Stage stage = (Stage) resetPasswordButton.getScene().getWindow();
                 stage.setScene(new Scene(root, 743, 558));
@@ -58,8 +61,7 @@ public class ResetPasswordController {
         }
     }
 
-    // Helper method to show alerts
-    private void showAlert(String title, String message) {
+    public void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);

@@ -16,14 +16,14 @@ public class PortalSelectionPageController {
     @FXML
     public Button adminButton;
 
-    public void onUserButtonClick(ActionEvent actionEvent) throws IOException {
+    public void onUserButtonClick(ActionEvent actionEvent) throws IOException { //open user welcome page if user is clicked
         Stage previousStage = (Stage)this.userButton.getScene().getWindow();
         Parent root = (Parent) FXMLLoader.load(this.getClass().getResource("welcome-page.fxml"));
         previousStage.setScene(new Scene(root, 488, 250));
         previousStage.show();
     }
 
-    public void onAdminButtonClick(ActionEvent actionEvent) throws IOException {
+    public void onAdminButtonClick(ActionEvent actionEvent) throws IOException { //open admin welcome page if user is clicked
         Stage previousStage = (Stage)this.adminButton.getScene().getWindow();
         Parent root = (Parent) FXMLLoader.load(this.getClass().getResource("admin-welcome-page.fxml"));
         previousStage.setScene(new Scene(root, 488, 250));
