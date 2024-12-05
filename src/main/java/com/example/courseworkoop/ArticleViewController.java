@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -39,6 +40,7 @@ public class ArticleViewController {
     @FXML
     protected Label usernameLabel;
 
+    private String url;
     private String username; // Store username
     private String articleTitle; // Store article title
     private String currentLikeDislikeStatus = "none"; // To track like/dislike status
@@ -50,9 +52,12 @@ public class ArticleViewController {
         urlLabel.setText("URL: " + url); // Display URL instead of content
         this.username = username; // Store the username
         this.articleTitle = title;
+        this.url = url;
 
         setUsername(username); // Ensure username is displayed in the view
-        retrieveLikeDislikeStatus(); // Fetch current like/dislike status
+        retrieveLikeDislikeStatus();// Fetch current like/dislike status
+
+        urlLabel.setOnMouseClicked(this::openArticleUrl);
     }
 
     public void setUsername(String username) {
@@ -226,6 +231,18 @@ public class ArticleViewController {
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    // Method to open the article URL in a browser
+    private void openArticleUrl(MouseEvent event) {
+        if (url != null && !url.isEmpty()) {
+            try {
+                // Open the URL in the default browser
+                java.awt.Desktop.getDesktop().browse(java.net.URI.create(url));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

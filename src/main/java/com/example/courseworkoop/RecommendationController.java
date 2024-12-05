@@ -153,12 +153,13 @@ public class RecommendationController {
 
     private void openArticleView(Article article) {
         try {
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("article-view.fxml"));
             Parent root = loader.load();
 
             // Get controller and pass article details and username
             ArticleViewController articleViewController = loader.getController();
-            articleViewController.setArticleDetails(article.getTitle(), article.getDescription(), article.getUrl(),this.username);
+            articleViewController.setArticleDetails(article.getTitle(), article.getDescription(), article.getUrl(), this.username); // Pass URL here
 
             // Set the scene for the article view
             Stage stage = (Stage) recommendationsListView.getScene().getWindow();

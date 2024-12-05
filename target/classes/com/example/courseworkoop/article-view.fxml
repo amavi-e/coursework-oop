@@ -8,7 +8,7 @@
     <children>
         <Label fx:id="titleLabel" layoutX="24.0" layoutY="128.0" maxWidth="550.0" styleClass="article-title-label" text="Title" wrapText="true" />
         <Label fx:id="descriptionLabel" layoutX="34.0" layoutY="286.0" maxWidth="550.0" styleClass="article-description-label" text="Description" wrapText="true" />
-        <Label fx:id="urlLabel" layoutX="34.0" layoutY="221.0" text="URL" />
+        <Label fx:id="urlLabel" layoutX="34.0" layoutY="221.0" text="URL" styleClass="article-url-label"/>
         <Button fx:id="backButton" layoutX="36.0" layoutY="34.0" mnemonicParsing="false" onAction="#onBackButtonClick" text="Back" />
         <Label fx:id="usernameLabel" layoutX="500.0" layoutY="38.0" styleClass="welcome-name-label" text="" />
         <Button fx:id="likeButton" layoutX="204.0" layoutY="80.0" mnemonicParsing="false" onAction="#onLikeButtonClick" text="Like article" />

@@ -7,10 +7,13 @@
 <AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@articleViewCSS.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.courseworkoop.AdminArticleViewController">
     <children>
         <Label fx:id="usernameLabel" layoutX="538.0" layoutY="21.0" prefHeight="19.0" prefWidth="185.0" styleClass="welcome-name-label" text="" />
-        <Label fx:id="titleLabel" layoutX="36.0" layoutY="74.0" maxWidth="550.0" styleClass="article-title-label" text="Title" wrapText="true" />
+        <Label fx:id="titleLabel" layoutX="36.0" layoutY="81.0" maxWidth="550.0" styleClass="article-title-label" text="Title" wrapText="true" />
         <Label fx:id="descriptionLabel" layoutX="36.0" layoutY="208.0" maxWidth="550.0" styleClass="article-description-label" text="Description" wrapText="true" />
         <Label fx:id="urlLabel" layoutX="34.0" layoutY="164.0" styleClass="article-url-label" text="URL" />
         <Button fx:id="backButton" layoutX="24.0" layoutY="21.0" mnemonicParsing="false" onAction="#onBackButtonClick" text="Back" />
         <Button fx:id="deleteButton" layoutX="324.0" layoutY="332.0" mnemonicParsing="false" onAction="#onDeleteArticleButtonClick" text="Delete Article" />
+        <Button fx:id="signInButton" layoutX="219.0" layoutY="14.0" mnemonicParsing="false" onAction="#onSignInButtonClick" styleClass="top-button" text="Sign In" />
+        <Button fx:id="signUpButton" layoutX="315.0" layoutY="14.0" mnemonicParsing="false" onAction="#onSignUpButtonClick" styleClass="top-button" text="Sign Up" />
+        <Button fx:id="logOutButton" layoutX="420.0" layoutY="14.0" mnemonicParsing="false" onAction="#onLogOutButtonClick" styleClass="top-button" text="Log Out" />
     </children>
 </AnchorPane>
