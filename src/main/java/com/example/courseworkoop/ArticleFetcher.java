@@ -204,8 +204,21 @@ public class ArticleFetcher {
 
     public void storeArticleInDatabase(String title, String description, String content, String url, String category) {
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            String sql = "INSERT INTO Articles (title, description, content, url, category) VALUES (?, ?, ?, ?, ?)";
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            //check if the article already exists
+            String checkSql = "SELECT COUNT(*) FROM Articles WHERE title = ? AND url = ?"; //gets the count if the same article title and url exists
+            try (PreparedStatement checkStatement = connection.prepareStatement(checkSql)) {
+                checkStatement.setString(1, title);
+                checkStatement.setString(2, url);
+                ResultSet rs = checkStatement.executeQuery();
+                if (rs.next() && rs.getInt(1) > 0) { // if count is greater than 0, the article is skipped
+                    System.out.println("Article already exists: " + title);
+                    return; //skip storing this article
+                }
+            }
+
+            //store the article if it doesn't exist
+            String insertSql = "INSERT INTO Articles (title, description, content, url, category) VALUES (?, ?, ?, ?, ?)";
+            try (PreparedStatement statement = connection.prepareStatement(insertSql)) {
                 statement.setString(1, title);
                 statement.setString(2, description);
                 statement.setString(3, content);
@@ -218,6 +231,7 @@ public class ArticleFetcher {
             e.printStackTrace();
         }
     }
+
 
     public static void main(String[] args) {
         ArticleFetcher articleFetcher = new ArticleFetcher();
