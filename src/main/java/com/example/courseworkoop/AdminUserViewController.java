@@ -39,17 +39,17 @@ public class AdminUserViewController {
     private String user; // User to display/manage
     private String username; // Admin username
 
-    public void setUsername(String username) { // Set admin name
+    public void setUsername(String username) { //set admin name
         this.username = username;
         if (usernameLabel != null) {
             usernameLabel.setText("Welcome, " + username + "!");
         }
     }
 
-    public void setUser(String user) { // Set user's username
-        this.user = user;
+    public void setUser(String userFullName) { // Accept full name
+        this.user = userFullName; // Store the full name
         if (userLabel != null) {
-            userLabel.setText("User: " + user);
+            userLabel.setText("User: " + userFullName); // Display full name
         }
         populateUserHistory();
     }
@@ -60,12 +60,13 @@ public class AdminUserViewController {
         String dbPassword = "";
 
         String query = "SELECT articleTitle, articleCategory, viewCount, likeDislikeStatus " +
-                "FROM UserArticleHistory WHERE username = ?";
+                "FROM UserArticleHistory " +
+                "WHERE username = (SELECT Username FROM UserDetails WHERE FullName = ?)";
 
         try (Connection connection = DriverManager.getConnection(url, dbUser, dbPassword);
              PreparedStatement statement = connection.prepareStatement(query)) {
 
-            statement.setString(1, user); // Use the correct user for query
+            statement.setString(1, user); // Use the full name to query for the user's history
             ResultSet resultSet = statement.executeQuery();
 
             // Add user details to the VBox

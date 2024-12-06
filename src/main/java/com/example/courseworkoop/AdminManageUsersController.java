@@ -57,15 +57,15 @@ public class AdminManageUsersController {
         String user = "root";
         String password = "";
 
-        String query = "SELECT Username FROM UserDetails";
+        String query = "SELECT FullName FROM UserDetails"; // Updated to fetch full name
 
         try (Connection connection = DriverManager.getConnection(url, user, password);
              PreparedStatement statement = connection.prepareStatement(query);
              ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-                String username = resultSet.getString("Username");
-                usersList.add(username); // Display only usernames
+                String fullName = resultSet.getString("FullName"); // Fetch the full name
+                usersList.add(fullName); // Display full names instead of usernames
             }
 
         } catch (SQLException e) {
@@ -77,24 +77,23 @@ public class AdminManageUsersController {
             if (event.getClickCount() == 2) { // Double-click to view user history
                 String selectedUser = usersListView.getSelectionModel().getSelectedItem();
                 if (selectedUser != null) {
-                    redirectToUserView(selectedUser);
+                    redirectToUserView(selectedUser); // Pass the full name
                 }
             }
         });
     }
 
-    public void redirectToUserView(String selectedUser) {
+    public void redirectToUserView(String selectedUserFullName) { // Pass full name instead of username
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("admin-user-view.fxml"));
             Parent root = loader.load();
 
             AdminUserViewController controller = loader.getController();
-            controller.setUser(selectedUser); // Pass the selected user
+            controller.setUser(selectedUserFullName); // Pass the selected full name
 
-            // Pass the username to AdminUserViewController
-            AdminUserViewController adminUserViewController= loader.getController();
+            // Pass the admin username to AdminUserViewController
+            AdminUserViewController adminUserViewController = loader.getController();
             adminUserViewController.setUsername(username);
-
 
             Stage stage = (Stage) usersListView.getScene().getWindow();
             stage.setScene(new Scene(root, 743, 495));
@@ -104,6 +103,7 @@ public class AdminManageUsersController {
             e.printStackTrace();
         }
     }
+
 
     public void onDeleteAllUsersButton(ActionEvent actionEvent) {
         String url = "jdbc:mysql://localhost:3306/personalizedArticles";
@@ -129,7 +129,7 @@ public class AdminManageUsersController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("admin-dashboard.fxml"));
         Parent root = loader.load();
 
-        // Pass the username to UserViewController
+        // Pass the admin's username to UserViewController
         AdminDashboardController adminDashboardController = loader.getController();
         adminDashboardController.setUsername(username);
 
