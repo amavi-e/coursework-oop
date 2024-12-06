@@ -70,18 +70,20 @@ public class DatabaseManager {
     }
 
     //method to register a new admin in the adminDetails table
-    public void registerAdmin(String username, String password) {
-        String insertQuery = "INSERT INTO adminDetails (Username, password) VALUES (?, ?)";
+    public void registerAdmin(String fullName, String username, String password) {
+        String insertQuery = "INSERT INTO adminDetails (FullName, Username, Password) VALUES (?, ?, ?)";
         try (Connection conn = connect();
              PreparedStatement stmt = conn.prepareStatement(insertQuery)) {
 
-            stmt.setString(1, username);
-            stmt.setString(2, password);
+            stmt.setString(1, fullName);   // Set value for FullName
+            stmt.setString(2, username);  // Set value for Username
+            stmt.setString(3, password);  // Set value for Password
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 
     //method to validate a regular user (checking UserDetails table)
     public boolean validateUser(String username, String password) {
@@ -156,6 +158,27 @@ public class DatabaseManager {
     // Method to check if a user with the same full name, username, and password already exists
     public boolean userAlreadyRegistered(String fullName, String username, String password) {
         String query = "SELECT COUNT(*) FROM UserDetails WHERE FullName = ? AND Username = ? AND password = ?";
+        try (Connection conn = connect();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, fullName);  // Set the full name parameter
+            stmt.setString(2, username); // Set the username parameter
+            stmt.setString(3, password); // Set the password parameter
+            ResultSet rs = stmt.executeQuery();
+
+            // Check if a matching user exists
+            if (rs.next()) {
+                return rs.getInt(1) > 0; // Return true if count > 0
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Method to check if an admin with the same full name, username, and password already exists
+    public boolean adminAlreadyRegistered(String fullName, String username, String password) {
+        String query = "SELECT COUNT(*) FROM adminDetails WHERE FullName = ? AND Username = ? AND password = ?";
         try (Connection conn = connect();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 

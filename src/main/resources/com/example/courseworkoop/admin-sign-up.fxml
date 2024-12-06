@@ -8,14 +8,16 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="516.0" stylesheets="@signUpCSS.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.courseworkoop.AdminSignUpPageController">
     <children>
-        <Label layoutX="151.0" layoutY="37.0" prefHeight="28.0" prefWidth="205.0" styleClass="title-label" text="Admin Sign Up Portal" />
-        <Label layoutX="178.0" layoutY="65.0" text="Create your Admin Account" />
-        <Label layoutX="110.0" layoutY="106.0" text="Username :" />
-        <TextField fx:id="userNameFieldSignUp" layoutX="110.0" layoutY="134.0" prefHeight="26.0" prefWidth="286.0" promptText="Please create a username" styleClass="text-field" />
-        <Label layoutX="110.0" layoutY="183.0" text="Password :" />
-        <Button fx:id="signUpFinalButton" layoutX="223.0" layoutY="256.0" mnemonicParsing="false" onAction="#onSignUpFinalButtonClick" text="Sign up" />
-        <Label layoutX="123.0" layoutY="324.0" text="Already have an account?" />
-        <Button fx:id="signInCreateAccountButton" layoutX="258.0" layoutY="316.0" mnemonicParsing="false" onAction="#onSignInCreateAccountClick" text="Sign in" />
-        <PasswordField fx:id="passwordFieldSignUp" layoutX="110.0" layoutY="210.0" prefHeight="29.0" prefWidth="286.0" promptText="Enter a secure password" />
+        <Label layoutX="151.0" layoutY="21.0" prefHeight="28.0" prefWidth="205.0" styleClass="title-label" text="Admin Sign Up Portal" />
+        <Label layoutX="179.0" layoutY="49.0" text="Create your Admin Account" />
+        <Label layoutX="111.0" layoutY="141.0" text="Username :" />
+        <TextField fx:id="userNameFieldSignUp" layoutX="110.0" layoutY="168.0" prefHeight="26.0" prefWidth="286.0" promptText="Please create a username" styleClass="text-field" />
+        <Label layoutX="112.0" layoutY="212.0" text="Password :" />
+        <Button fx:id="signUpFinalButton" layoutX="223.0" layoutY="290.0" mnemonicParsing="false" onAction="#onSignUpFinalButtonClick" text="Sign up" />
+        <Label layoutX="121.0" layoutY="342.0" text="Already have an account?" />
+        <Button fx:id="signInCreateAccountButton" layoutX="264.0" layoutY="334.0" mnemonicParsing="false" onAction="#onSignInCreateAccountClick" text="Sign in" />
+        <PasswordField fx:id="passwordFieldSignUp" layoutX="110.0" layoutY="243.0" prefHeight="29.0" prefWidth="286.0" promptText="Enter a secure password" />
+        <Label layoutX="111.0" layoutY="74.0" text="Full Name : " />
+        <TextField fx:id="fullNameField" layoutX="111.0" layoutY="100.0" prefHeight="26.0" prefWidth="286.0" promptText="Please enter your FULL NAME" styleClass="text-field" />
     </children>
 </AnchorPane>

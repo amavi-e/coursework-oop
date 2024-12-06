@@ -12,7 +12,7 @@ public class PersonalizedNewsRecommendationSystem extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(PersonalizedNewsRecommendationSystem.class.getResource("portal-selection-page.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 476, 167);
-        stage.setTitle("Hello!");
+        stage.setTitle("Personalized News Recommendation System");
         stage.setScene(scene);
         stage.show();
     }

@@ -49,15 +49,16 @@ public class SignUpPageController {
 
         DatabaseManager dbManager = new DatabaseManager();
 
-        // Check if username already exists
-        if (dbManager.usernameExists(username)) {
-            showAlert("Error", "This username is already taken. Please choose a different username.");
-            return;
-        }
 
         // Check if user is already registered
         if (dbManager.userAlreadyRegistered(fullName, username, password)) {
             showAlert("Error", "An account with this full name, username, and password already exists. Please log in.");
+            return;
+        }
+
+        // Check if username already exists
+        else if (dbManager.usernameExists(username)) {
+            showAlert("Error", "This username is already taken. Please choose a different username.");
             return;
         }
 

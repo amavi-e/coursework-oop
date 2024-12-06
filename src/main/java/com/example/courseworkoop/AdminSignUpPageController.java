@@ -23,15 +23,19 @@ public class AdminSignUpPageController {
     public Button signInCreateAccountButton;
     @FXML
     public PasswordField passwordFieldSignUp;
+    @FXML
+    public TextField fullNameField;
 
     private static final Pattern VALID_USERNAME_PATTERN = Pattern.compile("^[a-z0-9]+$");
+
 
     public void onSignUpFinalButtonClick(ActionEvent actionEvent) throws IOException {
         String username = userNameFieldSignUp.getText();
         String password = passwordFieldSignUp.getText();
+        String fullName = fullNameField.getText();
 
         // Check if fields are empty
-        if (username.isEmpty() || password.isEmpty()) {
+        if (username.isEmpty() || password.isEmpty() || fullName.isEmpty()) {
             showAlert("Error", "Username and password cannot be empty.");
             return;
         }
@@ -44,14 +48,20 @@ public class AdminSignUpPageController {
 
         DatabaseManager dbManager = new DatabaseManager();
 
+
+        // Check if admin is already registered
+        if (dbManager.adminAlreadyRegistered(fullName, username, password)) {
+            showAlert("Error", "An account with this full name, username, and password already exists. Please log in.");
+            return;
+        }
         // Check if admin username already exists
-        if (dbManager.adminUsernameExists(username)) {
+        else if (dbManager.adminUsernameExists(username)) {
             showAlert("Error", "Admin username already exists. Please choose a different username.");
             return;
         }
 
         // Register the new admin
-        dbManager.registerAdmin(username, password);
+        dbManager.registerAdmin(fullName, username, password);
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("admin-dashboard.fxml"));
         Parent root = loader.load();
@@ -65,6 +75,7 @@ public class AdminSignUpPageController {
         stage.show();
 
         // Clear fields after successful registration
+        fullNameField.clear();
         userNameFieldSignUp.clear();
         passwordFieldSignUp.clear();
     }
