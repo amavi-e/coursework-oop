@@ -173,4 +173,21 @@ public class DatabaseManager {
         }
         return false;
     }
+
+    public boolean hasUserReadArticles(String username) {
+        String query = "SELECT COUNT(*) FROM UserArticleHistory WHERE username = ?";
+        try (Connection conn = connect(); //establish the database connection
+             PreparedStatement stmt = conn.prepareStatement(query)) { //prepare the SQL query
+            stmt.setString(1, username); //set the username parameter in the query
+            ResultSet rs = stmt.executeQuery(); //execute the query
+            if (rs.next()) { //if a result is found
+                return rs.getInt(1) > 0; //return true if the count is greater than 0
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; //return false if no articles are found or an error occurs
+    }
+
+
 }

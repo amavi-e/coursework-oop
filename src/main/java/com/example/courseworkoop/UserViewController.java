@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -158,9 +159,21 @@ public class UserViewController {
         }
     }
 
+    public boolean hasReadAnyArticles() {
+        DatabaseManager dbManager = new DatabaseManager(); //create a new DatabaseManager instance
+        return dbManager.hasUserReadArticles(this.user.getUsername()); //pass the username from the User object
+    }
+
+
+
     @FXML
     public void onRecommendArticleButtonClick() {
         try {
+            if (!hasReadAnyArticles()) { //check if the user has read at least one article
+                showAlert("Error", "You need to read at least one article before getting recommendations.");
+                return;
+            }
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("recommendation-view.fxml"));
             Parent root = loader.load();
 
@@ -174,6 +187,7 @@ public class UserViewController {
             e.printStackTrace();
         }
     }
+
 
     //go back to sign in page
     public void onSignInButtonClick(ActionEvent actionEvent) throws IOException {
@@ -197,5 +211,13 @@ public class UserViewController {
         Parent root = (Parent)FXMLLoader.load(this.getClass().getResource("portal-selection-page.fxml"));
         previousStage.setScene(new Scene(root, 476, 167));
         previousStage.show();
+    }
+
+    public void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
