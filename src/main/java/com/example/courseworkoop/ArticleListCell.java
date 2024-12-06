@@ -12,11 +12,11 @@ public class ArticleListCell extends ListCell<Article> {
             setText(null);
             setGraphic(null);
         } else {
-            // Display only the title
+
             Text titleText = new Text(article.getTitle());
             titleText.getStyleClass().add("article-title");
 
-            setGraphic(titleText); // Set only the title as the graphic
+            setGraphic(titleText);
         }
     }
 }

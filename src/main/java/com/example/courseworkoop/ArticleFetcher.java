@@ -23,6 +23,7 @@ public class ArticleFetcher {
 
     private static final Map<String, String> CATEGORY_KEYWORDS = new HashMap<>();
 
+    //article categories and their key words
     static {
         CATEGORY_KEYWORDS.put("AI & Machine Learning", "artificial intelligence AI machine learning neural networks deep learning automation robotics algorithms");
         CATEGORY_KEYWORDS.put("Social Media", "social media Facebook Instagram Twitter TikTok influencers content viral posts trends engagement hashtags");
@@ -61,12 +62,13 @@ public class ArticleFetcher {
 
     public void fetchAndStoreArticles() {
         try {
-            // Step 1: Fetch articles from API
+            //fetch articles from API
             URL url = new URL(API_URL);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Content-Type", "application/json");
 
+            //reads the API response line by line using a BufferedReader and appends it to a StringBuilder
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             StringBuilder content = new StringBuilder();
             String inputLine;
@@ -75,7 +77,7 @@ public class ArticleFetcher {
             }
             in.close();
 
-            // Parse JSON response
+            //converts the response string into a JSON object.
             JSONObject jsonResponse = new JSONObject(content.toString());
 
             // Extract total number of articles
@@ -84,7 +86,7 @@ public class ArticleFetcher {
 
             JSONArray articles = jsonResponse.getJSONArray("articles");
 
-            // Step 2: Categorize and store articles
+            //handling missing fields
             for (int i = 0; i < articles.length(); i++) {
                 JSONObject article = articles.getJSONObject(i);
                 String title = article.optString("title", "No Title");
@@ -92,22 +94,22 @@ public class ArticleFetcher {
                 String contentText = article.optString("content", "No Content");
                 String urlToArticle = article.optString("url", "No URL");
 
-                // Skip articles with "[removed]" in title, description, or content
-                if (title.equals("[Removed]") || description.equals("[Removed]") || contentText.equals("[Removed]")) {
+                //skip articles with "[Removed]" in title, description, content or url
+                if (title.equals("[Removed]") || description.equals("[Removed]") || contentText.equals("[Removed]") || urlToArticle.equals("[Removed]")) {
                     System.out.println("Skipping article with removed content.");
                     continue;
                 }
 
-                // Categorize the article using NLP
+                //categorize the article using NLP
                 String category = categorizeArticleUsingNLP(title + " " + description + " " + contentText);
 
-                // Retry categorization if the category is "General"
+                //retry categorization if the category is "General"
                 if (category.equals("General")) {
                     System.out.println("Retrying categorization for article: " + title);
                     category = retryCategorization(title + " " + description + " " + contentText);
                 }
 
-                // Store the article in the database
+                //store the article in the database
                 storeArticleInDatabase(title, description, contentText, urlToArticle, category);
             }
 
@@ -116,26 +118,27 @@ public class ArticleFetcher {
         }
     }
 
+    //cleans and tokenizes article text.
+    //computes similarity scores with predefined categories using TF-IDF and cosine similarity.
     public String categorizeArticleUsingNLP(String text) {
         Map<String, Double> similarityScores = new HashMap<>();
         String cleanedText = preprocessText(text);
 
-        // Create TF-IDF for article text
         Map<String, Integer> articleWordCount = calculateWordFrequency(cleanedText);
 
         for (Map.Entry<String, String> categoryEntry : CATEGORY_KEYWORDS.entrySet()) {
             String category = categoryEntry.getKey();
             String keywords = preprocessText(categoryEntry.getValue());
 
-            // Create TF-IDF for category keywords
+            //create TF-IDF for category keywords
             Map<String, Integer> categoryWordCount = calculateWordFrequency(keywords);
 
-            // Calculate cosine similarity
+            //calculate cosine similarity
             double similarity = calculateCosineSimilarity(articleWordCount, categoryWordCount);
             similarityScores.put(category, similarity);
         }
 
-        // Find the category with the highest similarity score
+        //find the category with the highest similarity score
         return similarityScores.entrySet()
                 .stream()
                 .max(Map.Entry.comparingByValue())

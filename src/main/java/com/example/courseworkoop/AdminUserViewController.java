@@ -36,8 +36,8 @@ public class AdminUserViewController {
     @FXML
     public Button logOutButton;
 
-    private String user; // User to display/manage
-    private String username; // Admin username
+    private String user; //user to manage
+    private String username; //admin username
 
     public void setUsername(String username) { //set admin name
         this.username = username;
@@ -46,10 +46,10 @@ public class AdminUserViewController {
         }
     }
 
-    public void setUser(String userFullName) { // Accept full name
-        this.user = userFullName; // Store the full name
+    public void setUser(String userFullName) { //user's full name
+        this.user = userFullName;
         if (userLabel != null) {
-            userLabel.setText("User: " + userFullName); // Display full name
+            userLabel.setText("User: " + userFullName);
         }
         populateUserHistory();
     }
@@ -66,10 +66,10 @@ public class AdminUserViewController {
         try (Connection connection = DriverManager.getConnection(url, dbUser, dbPassword);
              PreparedStatement statement = connection.prepareStatement(query)) {
 
-            statement.setString(1, user); // Use the full name to query for the user's history
+            statement.setString(1, user);
             ResultSet resultSet = statement.executeQuery();
 
-            // Add user details to the VBox
+            //add user details to the VBox
             Label header = new Label("Articles Read:");
             header.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
             userDetailsBox.getChildren().add(header);
@@ -99,14 +99,12 @@ public class AdminUserViewController {
         try {
             Stage previousStage = (Stage) backButton.getScene().getWindow();
 
-            // Load the admin articles management screen
             FXMLLoader loader = new FXMLLoader(getClass().getResource("admin-manage-users.fxml"));
             Parent root = loader.load();
 
             AdminManageUsersController adminManageUsersController = loader.getController();
             adminManageUsersController.setUsername(username);
 
-            // Set the scene and show the stage
             previousStage.setScene(new Scene(root, 743, 495));
             previousStage.show();
         } catch (IOException e) {
@@ -123,19 +121,19 @@ public class AdminUserViewController {
         String deleteHistoryQuery = "DELETE FROM UserArticleHistory WHERE Username = ?";
 
         try (Connection connection = DriverManager.getConnection(url, dbUser, dbPassword)) {
-            // Delete user from UserDetails
+            //delete user from UserDetails
             try (PreparedStatement userStmt = connection.prepareStatement(deleteQuery)) {
                 userStmt.setString(1, user);
                 userStmt.executeUpdate();
             }
 
-            // Delete user's article history
+            //delete user's article history
             try (PreparedStatement historyStmt = connection.prepareStatement(deleteHistoryQuery)) {
                 historyStmt.setString(1, user);
                 historyStmt.executeUpdate();
             }
 
-            // Redirect back to AdminManageUsers
+            //redirect back to AdminManageUsers
             onBackButtonClick(actionEvent);
 
         } catch (Exception e) {

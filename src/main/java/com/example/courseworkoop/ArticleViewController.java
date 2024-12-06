@@ -41,7 +41,7 @@ public class ArticleViewController {
     protected Label usernameLabel;
 
     private String url;
-    private User user; // Use the User class
+    private User user;
     private String articleTitle;
     private String currentLikeDislikeStatus = "none";
 
@@ -49,11 +49,11 @@ public class ArticleViewController {
         titleLabel.setText(title);
         descriptionLabel.setText("Description: " + description);
         urlLabel.setText("URL: " + url);
-        this.user = user; // Store the User object
+        this.user = user;
         this.articleTitle = title;
         this.url = url;
 
-        setUser(user); // Use the User object to set the username
+        setUser(user);
         retrieveLikeDislikeStatus();
 
         urlLabel.setOnMouseClicked(this::openArticleUrl);
@@ -206,7 +206,7 @@ public class ArticleViewController {
                 }
             }
 
-            // Navigate back to the user view
+
             Stage stage = (Stage) skipButton.getScene().getWindow();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("user-view.fxml"));
             Parent root = loader.load();

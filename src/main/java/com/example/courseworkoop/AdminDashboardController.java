@@ -28,7 +28,7 @@ public class AdminDashboardController {
 
     private String username;
 
-    // Set username and populate articles when set
+    //set username and populate articles when set
     public void setUsername(String username) {
         this.username = username;
         if (usernameLabel != null) {
@@ -40,7 +40,6 @@ public class AdminDashboardController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("admin-manage-articles.fxml"));
         Parent root = loader.load();
 
-        // Pass the username to UserViewController
         AdminManageArticlesController adminManageArticlesController = loader.getController();
         adminManageArticlesController.setUsername(username);
 
@@ -53,7 +52,6 @@ public class AdminDashboardController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("admin-manage-users.fxml"));
         Parent root = loader.load();
 
-        // Pass the username to UserViewController
         AdminManageUsersController adminManageUsersController = loader.getController();
         adminManageUsersController.setUsername(username);
 

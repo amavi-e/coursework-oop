@@ -30,7 +30,7 @@ public class AdminArticleViewController {
     @FXML
     private Label descriptionLabel;
     @FXML
-    private Label urlLabel; // URL label to display the article URL
+    private Label urlLabel;
     @FXML
     private Button backButton;
     @FXML
@@ -41,7 +41,7 @@ public class AdminArticleViewController {
     private String url;
     private String username;
 
-    // Set username and populate articles when set
+    //set username and populate articles when set
     public void setUsername(String username) {
         this.username = username;
         if (usernameLabel != null) {
@@ -49,7 +49,7 @@ public class AdminArticleViewController {
         }
     }
 
-    // Method to set the article details
+    //set the article details
     public void setArticleDetails(String title, String description, String url, String username) {
         this.title = title;
         this.description = description;
@@ -58,21 +58,21 @@ public class AdminArticleViewController {
         titleLabel.setText(title);
         this.username = username;
         descriptionLabel.setText("Description: " + description);
-        urlLabel.setText("URL: " + url); // Display URL
+        urlLabel.setText("URL: " + url);
 
         setUsername(username);
 
-        // Add click event on URL
+        //click event on URL
         urlLabel.setOnMouseClicked(this::openArticleUrl);
     }
 
-    // Method to go back to the previous screen
+
     @FXML
     public void onBackButtonClick(ActionEvent actionEvent) throws IOException {
         redirectToManageArticlesScreen();
     }
 
-    // Method to handle the delete article button click
+
     @FXML
     public void onDeleteArticleButtonClick(ActionEvent actionEvent) {
         if (deleteArticleFromDatabase()) {
@@ -84,7 +84,7 @@ public class AdminArticleViewController {
         }
     }
 
-    // Method to delete the article from the database
+    //delete the article from the database
     public boolean deleteArticleFromDatabase() {
         String url = "jdbc:mysql://localhost:3306/personalizedArticles";
         String user = "root";
@@ -112,27 +112,25 @@ public class AdminArticleViewController {
         }
     }
 
-    // Method to redirect to the manage articles screen
+    //method to redirect to the manage articles screen
     public void redirectToManageArticlesScreen() throws IOException {
         Stage previousStage = (Stage) deleteButton.getScene().getWindow();
 
-        // Load the admin articles management screen
         FXMLLoader loader = new FXMLLoader(getClass().getResource("admin-manage-articles.fxml"));
         Parent root = loader.load();
 
         AdminManageArticlesController adminManageArticlesController = loader.getController();
         adminManageArticlesController.setUsername(username);
 
-        // Set the scene and show the stage
         previousStage.setScene(new Scene(root, 743, 495));
         previousStage.show();
     }
 
-    // Method to open the article URL in a browser
+    //method to open the article URL in a browser
     private void openArticleUrl(MouseEvent event) {
         if (url != null && !url.isEmpty()) {
             try {
-                // Open the URL in the default browser
+                //open the URL in the default browser
                 java.awt.Desktop.getDesktop().browse(java.net.URI.create(url));
             } catch (IOException e) {
                 e.printStackTrace();

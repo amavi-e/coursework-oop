@@ -30,17 +30,17 @@ public class AdminSignUpPageController {
 
 
     public void onSignUpFinalButtonClick(ActionEvent actionEvent) throws IOException {
-        String username = userNameFieldSignUp.getText();
-        String password = passwordFieldSignUp.getText();
-        String fullName = fullNameField.getText();
+        String username = userNameFieldSignUp.getText(); //get the username
+        String password = passwordFieldSignUp.getText(); //get the password
+        String fullName = fullNameField.getText(); //get the full name
 
-        // Check if fields are empty
+        //check if fields are empty
         if (username.isEmpty() || password.isEmpty() || fullName.isEmpty()) {
             showAlert("Error", "Username and password cannot be empty.");
             return;
         }
 
-        // Validate username format
+        //validate username format
         if (!isValidUsername(username)) {
             showAlert("Error", "Username must contain only lowercase letters and numbers, without spaces or special characters.");
             return;
@@ -49,24 +49,24 @@ public class AdminSignUpPageController {
         DatabaseManager dbManager = new DatabaseManager();
 
 
-        // Check if admin is already registered
+        //check if admin is already registered
         if (dbManager.adminAlreadyRegistered(fullName, username, password)) {
             showAlert("Error", "An account with this full name, username, and password already exists. Please log in.");
             return;
         }
-        // Check if admin username already exists
+        //check if admin username already exists
         else if (dbManager.adminUsernameExists(username)) {
             showAlert("Error", "Admin username already exists. Please choose a different username.");
             return;
         }
 
-        // Register the new admin
+        //register the new admin
         dbManager.registerAdmin(fullName, username, password);
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("admin-dashboard.fxml"));
         Parent root = loader.load();
 
-        // Pass the username to UserViewController
+        //pass the username to UserViewController
         AdminDashboardController adminDashboardController = loader.getController();
         adminDashboardController.setUsername(username);
 
@@ -74,7 +74,7 @@ public class AdminSignUpPageController {
         stage.setScene(new Scene(root, 743, 165));
         stage.show();
 
-        // Clear fields after successful registration
+        //clear fields after successful registration
         fullNameField.clear();
         userNameFieldSignUp.clear();
         passwordFieldSignUp.clear();

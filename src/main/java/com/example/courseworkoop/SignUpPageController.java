@@ -35,13 +35,13 @@ public class SignUpPageController {
         String password = passwordFieldSignUp.getText(); // Get password field
         String fullName = fullNameField.getText(); // Get full name field
 
-        // Check if fields are empty
+        //check if fields are empty
         if (username.isEmpty() || password.isEmpty() || fullName.isEmpty()) {
             showAlert("Error", "Full name, username, and password cannot be empty.");
             return;
         }
 
-        // Validate username format
+        //validate username format
         if (!isValidUsername(username)) {
             showAlert("Error", "Username must contain only lowercase letters, numbers, or underscores, without spaces or special characters.");
             return;
@@ -50,26 +50,25 @@ public class SignUpPageController {
         DatabaseManager dbManager = new DatabaseManager();
 
 
-        // Check if user is already registered
+        //check if user is already registered
         if (dbManager.userAlreadyRegistered(fullName, username, password)) {
             showAlert("Error", "An account with this full name, username, and password already exists. Please log in.");
             return;
         }
 
-        // Check if username already exists
+        //check if username already exists
         else if (dbManager.usernameExists(username)) {
             showAlert("Error", "This username is already taken. Please choose a different username.");
             return;
         }
 
-        // Create a new User object and register it to the system
+        //register new user
         User newUser = new User(fullName, username, password);
         dbManager.registerUser(newUser.getFullName(), newUser.getUsername(), newUser.getPassword());
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("user-view.fxml"));
         Parent root = loader.load();
 
-        // Pass the new User object to UserViewController
         UserViewController userController = loader.getController();
         userController.setUser(newUser);
 
@@ -77,7 +76,7 @@ public class SignUpPageController {
         stage.setScene(new Scene(root, 743, 558));
         stage.show();
 
-        // Clear fields after successful registration
+        //clear fields after successful registration
         fullNameField.clear();
         userNameFieldSignUp.clear();
         passwordFieldSignUp.clear();

@@ -24,18 +24,18 @@ public class AdminSignInPageController {
     @FXML
     public Button forgotPasswordButton;
 
-    // Admin sign-in action
+    //admin sign-in action
     public void OnSignInButtonFinalClick(ActionEvent actionEvent) throws IOException {
         String username = usernameSignInPage.getText();
         String password = passwordSignInPage.getText();
 
-        // Check if fields are empty
+        //check if fields are empty
         if (username.isEmpty() || password.isEmpty()) {
             showAlert("Error", "Username and password cannot be empty.");
             return;
         }
 
-        // Validate the admin username and password with the database
+        //validate the admin username and password with the database
         DatabaseManager dbManager = new DatabaseManager();
         boolean validAdmin = dbManager.validateAdmin(username, password);
 
@@ -43,7 +43,7 @@ public class AdminSignInPageController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("admin-dashboard.fxml"));
             Parent root = loader.load();
 
-            // Pass the username to UserViewController
+            //pass the username to UserViewController
             AdminDashboardController adminDashboardController = loader.getController();
             adminDashboardController.setUsername(username);
 
@@ -55,7 +55,7 @@ public class AdminSignInPageController {
         }
     }
 
-    // Helper method to show alerts
+    //method to show alerts
     public void showAlert(String title, String message) {
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -64,7 +64,7 @@ public class AdminSignInPageController {
         alert.showAndWait();
     }
 
-    // Redirect to sign-up page for admins
+    //redirect to sign-up page for admins
     public void onSignUpLoginPageButtonClick(ActionEvent actionEvent) throws IOException {
         Stage previousStage = (Stage) this.signUpLoginPageButton.getScene().getWindow();
         Parent root = FXMLLoader.load(this.getClass().getResource("admin-sign-up.fxml"));
@@ -72,7 +72,7 @@ public class AdminSignInPageController {
         previousStage.show();
     }
 
-    // Forgot password functionality (redirect to reset password page)
+    //forgot password functionality
     public void onForgotPasswordButtonClick(ActionEvent actionEvent) throws IOException {
         Stage previousStage = (Stage) this.forgotPasswordButton.getScene().getWindow();
         Parent root = FXMLLoader.load(this.getClass().getResource("admin-reset-password.fxml"));

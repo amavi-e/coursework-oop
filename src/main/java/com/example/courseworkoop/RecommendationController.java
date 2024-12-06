@@ -36,10 +36,10 @@ public class RecommendationController {
     @FXML
     public Button logOutButton;
 
-    private User user; // Replaced username with a User instance
+    private User user;
 
     public void setUser(User user) {
-        this.user = user; // Ensure the user field is properly initialized
+        this.user = user;
         if (usernameLabel != null && user != null) {
             usernameLabel.setText("Welcome, " + user.getUsername() + "!");
         }
@@ -67,35 +67,35 @@ public class RecommendationController {
     }
 
     public List<Article> fetchRecommendedArticles() {
-        List<Article> recommendedArticles = new ArrayList<>();
+        List<Article> recommendedArticles = new ArrayList<>(); //creates a List<Article> to store the recommended articles
         String url = "jdbc:mysql://localhost:3306/personalizedArticles";
         String user = "root";
         String password = "";
 
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
 
-            List<String> viewedCategories = new ArrayList<>();
-            List<String> dislikedCategories = new ArrayList<>();
+            List<String> viewedCategories = new ArrayList<>(); //articles with positive interactions
+            List<String> dislikedCategories = new ArrayList<>(); //articles disliked
             List<Object> parameters = new ArrayList<>();
 
             String viewQuery = "SELECT articleCategory, COUNT(*) AS viewCount " +
                     "FROM UserArticleHistory " +
                     "WHERE username = ? AND likeDislikeStatus != 0 " +
                     "GROUP BY articleCategory " +
-                    "ORDER BY viewCount DESC"; //categories the user has viewed (excluding dislikes)
+                    "ORDER BY viewCount DESC"; //categories the user has viewed (excluding dislikes), the highest viewed first
             String dislikeQuery = "SELECT DISTINCT articleCategory FROM UserArticleHistory " +
                     "WHERE username = ? AND likeDislikeStatus = 0"; //categories the user dislikes.
 
-            //categories viewed by the user
-            try (PreparedStatement viewStmt = connection.prepareStatement(viewQuery)) {
+
+            try (PreparedStatement viewStmt = connection.prepareStatement(viewQuery)) { //executes the viewQuery
                 viewStmt.setString(1, this.user.getUsername());
                 ResultSet rs = viewStmt.executeQuery();
-                while (rs.next()) {
+                while (rs.next()) { //iterates through the result to populate viewedCategories
                     viewedCategories.add(rs.getString("articleCategory"));
                 }
             }
 
-            //categories disliked by the user
+            //getting categories disliked by the user
             try (PreparedStatement dislikeStmt = connection.prepareStatement(dislikeQuery)) {
                 dislikeStmt.setString(1, this.user.getUsername());
                 ResultSet rs = dislikeStmt.executeQuery();
@@ -108,26 +108,22 @@ public class RecommendationController {
             StringBuilder queryBuilder = new StringBuilder("SELECT title, description, content, url, category FROM Articles WHERE ");
             List<String> conditions = new ArrayList<>();
 
-            if (!viewedCategories.isEmpty()) {
+            if (!viewedCategories.isEmpty()) { //only articles in the viewedCategories list
                 String viewedCondition = "category IN (" + String.join(",", viewedCategories.stream().map(c -> "?").toArray(String[]::new)) + ")";
                 conditions.add(viewedCondition);
                 parameters.addAll(viewedCategories);
             }
 
-            if (!dislikedCategories.isEmpty()) {
+            if (!dislikedCategories.isEmpty()) { //exclude articles in the dislikedCategories list
                 String dislikedCondition = "category NOT IN (" + String.join(",", dislikedCategories.stream().map(c -> "?").toArray(String[]::new)) + ")";
                 conditions.add(dislikedCondition);
                 parameters.addAll(dislikedCategories);
             }
 
-            if (conditions.isEmpty()) {
-                // No preferences found; return an empty list or a default set of recommendations
-                return recommendedArticles;
-            }
 
-            queryBuilder.append(String.join(" AND ", conditions)).append(" ORDER BY RAND()");
+            queryBuilder.append(String.join(" AND ", conditions)).append(" ORDER BY RAND()"); //the resulting articles
 
-            // Step 3: Execute query
+            //execute query
             try (PreparedStatement stmt = connection.prepareStatement(queryBuilder.toString())) {
                 for (int i = 0; i < parameters.size(); i++) {
                     stmt.setString(i + 1, parameters.get(i).toString());
@@ -156,11 +152,10 @@ public class RecommendationController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("article-view.fxml"));
             Parent root = loader.load();
 
-            // Get controller and pass article details and username
+            //pass article details and username
             ArticleViewController articleViewController = loader.getController();
             articleViewController.setArticleDetails(article.getTitle(), article.getDescription(), article.getUrl(), this.user); // Pass URL here
 
-            // Set the scene for the article view
             Stage stage = (Stage) recommendationsListView.getScene().getWindow();
             stage.setScene(new Scene(root, 743, 558));
         } catch (IOException e) {
@@ -171,15 +166,12 @@ public class RecommendationController {
     public void onBackButtonClick(ActionEvent actionEvent) throws IOException {
         Stage previousStage = (Stage) this.backButton.getScene().getWindow();
 
-        // Load the user-view.fxml
         FXMLLoader loader = new FXMLLoader(getClass().getResource("user-view.fxml"));
         Parent root = loader.load();
 
-        // Get the controller for UserViewController and pass the username
         UserViewController userViewController = loader.getController();
         userViewController.setUser(this.user); // Ensure the username is passed to the UserViewController
 
-        // Set the scene and show the previous stage
         previousStage.setScene(new Scene(root, 743, 495));
         previousStage.show();
     }

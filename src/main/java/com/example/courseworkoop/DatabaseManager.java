@@ -16,7 +16,7 @@ public class DatabaseManager {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
-    // Method to check if a username already exists in the UserDetails table
+    //method to check if a username already exists in the UserDetails table
     public boolean usernameExists(String username) {
         String query = "SELECT COUNT(*) FROM UserDetails WHERE Username = ?"; //counts the number of rows where the username matches the input
         try (Connection conn = connect();
@@ -44,7 +44,7 @@ public class DatabaseManager {
             stmt.setString(1, username);
             ResultSet rs = stmt.executeQuery();
 
-            // Check if the admin username exists
+            //check if the admin username exists
             if (rs.next()) {
                 return rs.getInt(1) > 0;
             }
@@ -54,7 +54,7 @@ public class DatabaseManager {
         return false;
     }
 
-    // Method to register a new user with full name, username, and password
+    //method to register a new user with full name, username, and password
     public void registerUser(String fullName, String username, String password) {
         String insertQuery = "INSERT INTO UserDetails (FullName, Username, password) VALUES (?, ?, ?)";
         try (Connection conn = connect();
@@ -85,7 +85,7 @@ public class DatabaseManager {
     }
 
 
-    //method to validate a regular user (checking UserDetails table)
+    //method to validate a regular user
     public boolean validateUser(String username, String password) {
         String query = "SELECT password FROM UserDetails WHERE Username = ?"; //to get the stored password for the username
         try (Connection conn = connect();
@@ -102,10 +102,10 @@ public class DatabaseManager {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false; // return false if username doesn't exist or password doesn't match
+        return false; //return false if username doesn't exist or password doesn't match
     }
 
-    //method to validate an admin user (checking adminDetails table)
+    //method to validate an admin user
     public boolean validateAdmin(String username, String password) {
         String query = "SELECT password FROM adminDetails WHERE Username = ?";
         try (Connection conn = connect();
@@ -155,18 +155,18 @@ public class DatabaseManager {
         }
     }
 
-    // Method to check if a user with the same full name, username, and password already exists
+    //method to check if a user with the same full name, username, and password already exists
     public boolean userAlreadyRegistered(String fullName, String username, String password) {
         String query = "SELECT COUNT(*) FROM UserDetails WHERE FullName = ? AND Username = ? AND password = ?";
         try (Connection conn = connect();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setString(1, fullName);  // Set the full name parameter
-            stmt.setString(2, username); // Set the username parameter
-            stmt.setString(3, password); // Set the password parameter
+            stmt.setString(1, fullName);  //set the full name parameter
+            stmt.setString(2, username); //set the username parameter
+            stmt.setString(3, password); //set the password parameter
             ResultSet rs = stmt.executeQuery();
 
-            // Check if a matching user exists
+            //check if a matching user exists
             if (rs.next()) {
                 return rs.getInt(1) > 0; // Return true if count > 0
             }
@@ -176,18 +176,18 @@ public class DatabaseManager {
         return false;
     }
 
-    // Method to check if an admin with the same full name, username, and password already exists
+    //method to check if an admin with the same full name, username, and password already exists
     public boolean adminAlreadyRegistered(String fullName, String username, String password) {
         String query = "SELECT COUNT(*) FROM adminDetails WHERE FullName = ? AND Username = ? AND password = ?";
         try (Connection conn = connect();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setString(1, fullName);  // Set the full name parameter
-            stmt.setString(2, username); // Set the username parameter
-            stmt.setString(3, password); // Set the password parameter
+            stmt.setString(1, fullName);  //set the full name parameter
+            stmt.setString(2, username); //set the username parameter
+            stmt.setString(3, password); //set the password parameter
             ResultSet rs = stmt.executeQuery();
 
-            // Check if a matching user exists
+            //check if a matching user exists
             if (rs.next()) {
                 return rs.getInt(1) > 0; // Return true if count > 0
             }

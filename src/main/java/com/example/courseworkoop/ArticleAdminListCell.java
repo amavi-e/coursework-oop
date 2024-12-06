@@ -33,11 +33,10 @@ public class ArticleAdminListCell extends ListCell<Article> {
 
         if (empty || article == null || "No Articles Available".equals(article.getTitle())) {
             setText("No Articles Available");
-            setGraphic(null); // Remove the button or any additional graphics
+            setGraphic(null);
         } else {
-            // Existing rendering logic for articles with the "Delete" button
             setText(article.getTitle() + "\n" + article.getDescription());
-            setGraphic(deleteButton); // Assume deleteButton is your Delete button
+            setGraphic(deleteButton);
         }
     }
 

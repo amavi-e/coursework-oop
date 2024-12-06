@@ -41,7 +41,7 @@ public class UserViewController {
         if (usernameLabel != null) {
             usernameLabel.setText("Welcome, " + user.getUsername() + "!");
         }
-        // Populate articles when the User object is set
+        //populate articles
         populateArticles();
     }
 
@@ -94,22 +94,18 @@ public class UserViewController {
 
     public void showArticleContent(Article article) {
         try {
-            // Load the FXML file for the article view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("article-view.fxml"));
             Parent root = loader.load();
-
-            // Get the controller for the article view
             ArticleViewController articleViewController = loader.getController();
 
-            // Set the article details in the new scene (passing title, description, URL, and User object)
+            //set the article details in the new scene
             articleViewController.setArticleDetails(article.getTitle(), article.getDescription(), article.getUrl(), this.user);
 
-            // Switch to the article view scene
             Stage previousStage = (Stage) articlesListView.getScene().getWindow();
             previousStage.setScene(new Scene(root, 743, 558));
             previousStage.show();
 
-            // Log the user's selected article to the database
+            //log the user's selected article to the database
             logUserHistory(article);
 
         } catch (IOException e) {

@@ -3,14 +3,14 @@ package com.example.courseworkoop;
 public class Article {
     private String title;
     private String description;
-    private String category; // New field to store the category of the article
+    private String category;
     private String url;
 
     public Article(String title, String description, String url, String category) {
         this.title = title;
         this.description = description;
-        this.url = url; // Initialize the URL
-        this.category = category; // Initialize the category
+        this.url = url;
+        this.category = category;
 
     }
 
@@ -23,11 +23,11 @@ public class Article {
     }
 
 
-    public String getCategory() { // Getter for category
+    public String getCategory() {
         return category;
     }
 
-    public String getUrl() { // Getter for URL
+    public String getUrl() {
         return url;
     }
 

@@ -49,7 +49,7 @@ public class AdminManageArticlesController {
         ObservableList<Article> articleObservableList = FXCollections.observableArrayList(articles);
         articlesListView.setItems(articleObservableList);
 
-        // Custom cell factory to include Delete button
+        //custom cell factory to include Delete button
         articlesListView.setCellFactory(param -> new ArticleAdminListCell(this::deleteArticle));
     }
 
@@ -95,7 +95,7 @@ public class AdminManageArticlesController {
 
             if (rowsAffected > 0) {
                 System.out.println("Article deleted successfully: " + article.getTitle());
-                populateArticles(); // Refresh the article list after deletion
+                populateArticles(); //refresh the article list after deletion
             } else {
                 System.out.println("Failed to delete article: " + article.getTitle());
             }
@@ -142,11 +142,11 @@ public class AdminManageArticlesController {
         try (Connection connection = DriverManager.getConnection(url, user, password);
              PreparedStatement deleteStatement = connection.prepareStatement(deleteQuery)) {
 
-            // Execute the delete query to remove all articles
+            //execute the delete query to remove all articles
             int rowsDeleted = deleteStatement.executeUpdate();
             System.out.println("Deleted " + rowsDeleted + " articles from the database.");
 
-            // Clear the articles from the ListView and show the "No Articles Available" message
+            //clear the articles from the ListView and show the "No Articles Available" message
             articlesListView.getItems().clear();
             articlesListView.getItems().add(new Article("No Articles Available", "", "", ""));
 
@@ -159,7 +159,6 @@ public class AdminManageArticlesController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("admin-dashboard.fxml"));
         Parent root = loader.load();
 
-        // Pass the username to UserViewController
         AdminDashboardController adminDashboardController = loader.getController();
         adminDashboardController.setUsername(username);
 
